@@ -79,7 +79,7 @@ contract.only("Silver", (accounts) => {
     });
   });
 
-  describe.only("Control tests", async () => {
+  describe("Control tests", async () => {
     it("should not be paused", async () => {
       const paused = await this.token.paused();
       assert.isFalse(paused, "Silver token should not be paused by default");

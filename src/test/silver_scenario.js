@@ -1,11 +1,11 @@
 const Token = artifacts.require("Silver");
 
-contract("Silver", function(accounts) {
+contract("Silver", async (accounts) => {
   const OWNER = accounts[0];
   const bob = accounts[1];
   const alice = accounts[2];
 
-  before(async function () {
+  before(async () => {
     this.token = await Token.new({from: OWNER});
   });
 

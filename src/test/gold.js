@@ -11,7 +11,7 @@ contract("Gold", async (accounts) => {
     tokenInstance = await Token.new();
   });
 
-  describe.only("ERC20 tests", async () => {
+  describe("ERC20 tests", async () => {
     it("should test ERC20 public properties", async () => {
       const name = await tokenInstance.name();
       assert.equal(name, "Gold Standard", "Name should be Gold Standard");
