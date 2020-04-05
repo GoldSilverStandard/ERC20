@@ -10,6 +10,8 @@ contract Base is ERC20, Ownable {
     uint constant private Sender = 0;
     uint constant private Receiver = 1;
 
+    bool public paused;
+
     struct Bar {
         uint256 amount;
         bytes32 location;
@@ -25,22 +27,22 @@ contract Base is ERC20, Ownable {
     uint256 public lastUpdated;
 
     uint256 public stockCount;
+    mapping (bytes32 => mapping(bytes32 => uint256)) public stock;
     
     address public minter;
     address public burner;
     address public feeHolder;
 
-    Bar[] public stock;
-
     mapping (address => uint256) private balances;
     mapping (address => mapping (address => uint256)) private allowed;
     mapping (uint => mapping(address => bool)) private whiteList;
-    
+
     function balanceOf(address who) public view returns (uint256 balance) {
         balance = balances[who];
     }
 
     function _transfer(address from, address to, uint256 value) internal {
+        require(paused != true, "Contract paused");
         require(to != address(0), "Invalid address");
         require(from != address(0), "Invalid address");
         require(balances[from] >= value, "Insufficient funds");
@@ -55,7 +57,7 @@ contract Base is ERC20, Ownable {
 
             if (totalFee == 0) {
                 totalFee = 1;
-            } 
+            }
 
             balances[from] = balances[from].sub(value);
             balances[feeHolder] = balances[feeHolder].add(totalFee);
@@ -93,31 +95,24 @@ contract Base is ERC20, Ownable {
         return true;
     }
 
-    function burn(bytes32 location, bytes32 serial, uint256 value) public onlyBurner() returns (bool) {
-        require(value > 0, "Amount must be greater than zero");
-        require(balances[owner] >= value, "Cannot burn more than you have");
-        require(totalSupply >= value, "Cannot burn more than the total supply");
+    function burn(bytes32 location, bytes32 serial) public onlyBurner() returns (bool) {
+        uint256 value = stock[location][serial];
 
-        for(uint i = 0; i < stock.length; i++) {
-            if (stock[i].location == location && stock[i].serial == serial && stock[i].amount == value) {
-                delete stock[i];
-                stockCount = stockCount.sub(1);
+        stock[location][serial] = 0;
+        balances[owner] = balances[owner].sub(value);
 
-                totalSupply = totalSupply.sub(value);
-                balances[owner] = balances[owner].sub(value);
+        stockCount = stockCount.sub(1);
+        totalSupply = totalSupply.sub(value);
 
-                emit Transfer(owner, address(0), value);
-            }
-        }
-
-        return true;
+        emit Transfer(owner, address(0), value);
     }
 
     function mint(address to, bytes32 location, bytes32 serial, uint256 value) public onlyMinter() returns(bool) {
         require(to != address(0), "Invalid address");
         require(value > 0, "Amount must be greater than zero");
 
-        stock.push(Bar(value, location, serial));
+        //mapping (bytes32 => mapping(bytes32 => uint256)) public stock;
+        stock[location][serial] = value;
         stockCount = stockCount.add(1);
 
         totalSupply = totalSupply.add(value);
@@ -130,7 +125,8 @@ contract Base is ERC20, Ownable {
 
     function decreaseFee(uint16 value) public onlyOwner() {
         require(value < fee, "New fee must be less than current fee");
-        
+        require(value >= 0, "Fee must be greater than or equal to zero");
+
         lastUpdated = now;
         fee = value;
         
@@ -187,6 +183,10 @@ contract Base is ERC20, Ownable {
 
     function isFeeExempt(uint index, address who) public view returns (bool) {
         return whiteList[index][who] == true || who == feeHolder || who == owner || who == burner || who == minter;
+    }
+
+    function pauseContract() public onlyOwner() {
+        paused = true;
     }
 
     event FeeUpdated(uint16 value);

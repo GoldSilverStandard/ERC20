@@ -15,5 +15,6 @@ contract Silver is Base {
         burner = msg.sender;
         minter = msg.sender;
         feeHolder = msg.sender;
+        paused = false;
     }
 }

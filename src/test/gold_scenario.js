@@ -1,18 +1,16 @@
 const Token = artifacts.require("Gold");
 
-contract("Gold", function(accounts) {
+contract("Gold", (accounts) => {
   const OWNER = accounts[0];
   const bob = accounts[1];
   const alice = accounts[2];
 
-  let token;
-
-  before(async function () {
-      this.token = await Token.new();
+  before(async () => {
+    this.token = await Token.new({from: OWNER});
   });
 
-  it("It should transfer 10 tokens from owner to bob", async () => {
-    await this.token.transfer(accounts[2], 10);
+  it("should transfer 10 tokens from owner to bob", async () => {
+    await this.token.transfer(accounts[2], 10, {from: OWNER});
     var actual = await this.token.balanceOf(OWNER);
     assert.equal(actual.valueOf(), 1327, "Balance should be 1327");
 

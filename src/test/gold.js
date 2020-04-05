@@ -1,21 +1,18 @@
 const Token = artifacts.require("Gold");
 const helper = require("./helpers/truffleTestHelper");
 
-contract("Gold", function(accounts) {
+contract("Gold", async (accounts) => {
   const OWNER = accounts[0];
   const ALICE = accounts[1];
   const BOB = accounts[2];
   const FEE_HOLDER = accounts[3];
-  const FEE_AMOUNT = 20;
 
-  let tokenInstance;
-
-  beforeEach(async function () {
+  beforeEach(async () => {
     tokenInstance = await Token.new();
   });
 
-  describe("ERC20 tests", () => {
-    it("It should test ERC20 public properties", async function () {
+  describe.only("ERC20 tests", async () => {
+    it("should test ERC20 public properties", async () => {
       const name = await tokenInstance.name();
       assert.equal(name, "Gold Standard", "Name should be Gold Standard");
 
@@ -23,19 +20,19 @@ contract("Gold", function(accounts) {
       assert.equal(symbol, "AUS", "Symbol should be AUS");
     });
 
-    it("Total supply should be 0", async function () {
+    it("Total supply should be 0", async () => {
       const actual = await tokenInstance.totalSupply();
       assert.equal(actual.valueOf(), 0, "Total supply should be 0");
     });
 
-    it("Owner balance should be 0", async function () {
+    it("Owner balance should be 0", async () => {
       const actual = await tokenInstance.balanceOf(OWNER);
       assert.equal(actual.valueOf(), 0, "Balance should be 0");
     });
   });
 
-  describe("Mint and burn tests", () => {
-    it("It should mint 1337 tokens", async function () {
+  describe("Mint and burn tests", async () => {
+    it("should mint 1337 tokens", async () => {
       await tokenInstance.mint(ALICE, '0x00', '0x01', 1337);
   
       const balance = await tokenInstance.balanceOf(ALICE);
@@ -48,7 +45,7 @@ contract("Gold", function(accounts) {
       assert.equal(count.valueOf(), 1, "Total stock should be 1");
     });
 
-    it("It should not burn with different bar sizes", async function () {
+    it("should not burn with different bar sizes", async () => {
       //Arange
       await tokenInstance.mint(OWNER, '0x00', '0x01', 100);
   
@@ -68,7 +65,7 @@ contract("Gold", function(accounts) {
       assert.equal(balance.valueOf(), 100, "Balance should be 100");
     });
 
-    it("It should not burn with different locations", async function () {
+    it("should not burn with different locations", async () => {
       await tokenInstance.mint(OWNER, '0x00', '0x01', 100);
   
       var balance = await tokenInstance.balanceOf(OWNER);
@@ -86,7 +83,7 @@ contract("Gold", function(accounts) {
       assert.equal(balance.valueOf(), 100, "Balance should be 100");
     });
 
-    it("It should not burn with different serial", async function () {
+    it("should not burn with different serial", async () => {
       await tokenInstance.mint(OWNER, '0x00', '0x01', 100);
   
       var balance = await tokenInstance.balanceOf(OWNER);
@@ -104,7 +101,7 @@ contract("Gold", function(accounts) {
       assert.equal(balance.valueOf(), 100, "Balance should be 100");
     });
 
-    it("It should burn 100 of 100 tokens", async function () {
+    it("should burn 100 of 100 tokens", async () => {
       await tokenInstance.mint(OWNER, '0x00', '0x01', 100);
   
       var balance = await tokenInstance.balanceOf(OWNER);
@@ -126,11 +123,9 @@ contract("Gold", function(accounts) {
     });
   });
 
-  describe("Fee tests", () => {
-    it("It should increase fee by 0.1%", async () => {
+  describe("Fee tests", async () => {
+    it("should increase fee by 0.1%", async () => {
       const fee = await tokenInstance.fee();
-
-      console.log(Number(fee));
       await tokenInstance.increaseFee();
 
       const actual = await tokenInstance.fee();
@@ -141,7 +136,7 @@ contract("Gold", function(accounts) {
       assert.isTrue(lastUpdated > 0, "Last updated not set");
     });
 
-    it("It should not allow fee increase within 30 days", async () => {
+    it("should not allow fee increase within 30 days", async () => {
       try {
         await tokenInstance.increaseFee();
       }
@@ -165,7 +160,7 @@ contract("Gold", function(accounts) {
       assert.isTrue(lastUpdated > 0, "Last updated not set");
     });
 
-    it("It should not allow a negative fee", async () => {
+    it("should not allow a negative fee", async () => {
       try {
         await tokenInstance.decreaseFee(-10);
       }
@@ -175,7 +170,7 @@ contract("Gold", function(accounts) {
       }
     });
 
-    it("It should decrease fee", async () => {
+    it("should decrease fee", async () => {
       await tokenInstance.decreaseFee(5);
       const actual = await tokenInstance.fee();
       const lastUpdated = await tokenInstance.lastUpdated();
@@ -185,13 +180,13 @@ contract("Gold", function(accounts) {
     });
   });
 
-  describe("With 10 grams (100,000 tokens) minted balance", () => {
+  describe("With 10 grams (100,000 tokens) minted balance", async () => {
     beforeEach(async () => {
       await tokenInstance.mint(OWNER, '0x00', '0x01', 100000);
       await tokenInstance.updateFeeHolder(FEE_HOLDER);
     });
 
-    it("It should transfer 1 gram (10000 tokens) from owner to bob (no fees)", async () => {
+    it("should transfer 1 gram (10000 tokens) from owner to bob (no fees)", async () => {
       await tokenInstance.transfer(BOB, 10000);
       var actual = await tokenInstance.balanceOf(OWNER);
       assert.equal(Number(actual), 90000, "Owner balance should be 9 grams");
@@ -203,7 +198,7 @@ contract("Gold", function(accounts) {
       assert.equal(Number(actual), 0, "Fee holder balance should be 0 gram");
     });
 
-    it("It should transfer 10 grams (100,000 tokens) from bob to alice with fee", async () => {
+    it("should transfer 10 grams (100,000 tokens) from bob to alice with fee", async () => {
       await tokenInstance.transfer(BOB, 20000);
       
       var actual = await tokenInstance.balanceOf(OWNER);
@@ -224,26 +219,26 @@ contract("Gold", function(accounts) {
       assert.equal(Number(actual), 20, "Balance should be 20");
     });
 
-    it("Owner should allow alice to transfer 100 tokens to bob from owner", async function () {
+    it("Owner should allow alice to transfer 100 tokens to bob from owner", async () => {
       await tokenInstance.approve(ALICE, 100);
 
       //account 0 (owner) now transfers from alice to bob
       await tokenInstance.transferFrom(OWNER, BOB, 100, {from: ALICE});
-      var actual = await tokenInstance.balanceOf(BOB);
+      const actual = await tokenInstance.balanceOf(BOB);
       assert.equal(actual.valueOf(), 100, "Balance should be 100");
     });
 
-    it("It should not allow transfer to zero address", async () => {
+    it("should not allow transfer to zero address", async () => {
       try {
         await tokenInstance.transfer(0, 10);
       }
       catch(error) {
         assert(error);
-        assert.equal(error.reason, "Invalid address", `Incorrect revert reason: ${error.reason}`);
+        assert.equal(error.reason, "invalid address", `Incorrect revert reason: ${error.reason}`);
       }
     });
 
-    it("It should not allow sending by user with insuffient funds", async () => {
+    it("should not allow sending by user with insuffient funds", async () => {
       await tokenInstance.transfer(BOB, 500);
       try {
         await tokenInstance.transfer(ALICE, 600, { from: BOB });
@@ -255,69 +250,69 @@ contract("Gold", function(accounts) {
     });
   });
 
-  describe("Roles and permissions tests", () => {
+  describe("Roles and permissions tests", async () => {
     beforeEach(async () => {
       await tokenInstance.mint(OWNER, '0x00', '0x01', 100000);
     });
 
-    it("Should allow owner to update burner", async function () {
+    it("should allow owner to update burner", async () => {
       await tokenInstance.updateBurner(ALICE);
 
-      let actual = await tokenInstance.burner();
+      const actual = await tokenInstance.burner();
       assert.equal(actual, ALICE, "Alice is not a burner");
     });
 
-    it("Should allow owner to update minter", async function () {
+    it("should allow owner to update minter", async () => {
       await tokenInstance.updateMinter(ALICE);
       
-      let actual = await tokenInstance.minter();
+      const actual = await tokenInstance.minter();
       assert.equal(actual, ALICE, "Alice is not a minter");
     });
 
-    it("Should allow owner to update fee holder", async function () {
+    it("should allow owner to update fee holder", async () => {
       await tokenInstance.updateFeeHolder(ALICE);
 
-      let actual = await tokenInstance.feeHolder();
+      const actual = await tokenInstance.feeHolder();
       assert.equal(actual, ALICE, "Alice is not a fee holder");
     });
 
-    it("Should add Alice to white list '0'", async function () {
+    it("should add Alice to white list '0'", async () => {
       const list = 0;
       await tokenInstance.addToWhiteList(list, ALICE);
 
-      let actual = await tokenInstance.inWhiteList(list, ALICE);
+      const actual = await tokenInstance.inWhiteList(list, ALICE);
       assert.isTrue(actual, "Alice is not the white list");
     });
 
-    it("Should add Alice to white list '1'", async function () {
+    it("should add Alice to white list '1'", async () => {
       const list = 1;
       await tokenInstance.addToWhiteList(list, ALICE);
 
-      let actual = await tokenInstance.inWhiteList(list, ALICE);
+      const actual = await tokenInstance.inWhiteList(list, ALICE);
       assert.isTrue(actual, "Alice is not the white list");
     });
 
-    it("Should be in any white list", async function () {
+    it("should be in any white list", async () => {
       const list = 1;
       await tokenInstance.addToWhiteList(list, ALICE);
 
-      let actual = await tokenInstance.inAnyWhiteList(ALICE);
+      const actual = await tokenInstance.inAnyWhiteList(ALICE);
       assert.isTrue(actual, "Alice is not the white list");
     });
 
-    it("Should be fee exempt if in sender '0' white list", async function () {
+    it("should be fee exempt if in sender '0' white list", async () => {
       const list = 0;
       await tokenInstance.addToWhiteList(list, ALICE);
 
-      let actual = await tokenInstance.isFeeExempt(list, ALICE);
+      const actual = await tokenInstance.isFeeExempt(list, ALICE);
       assert.isTrue(actual, "Alice is not fee exempt");
     });
 
-    it("Should be fee exempt if in sender '1' white list", async function () {
+    it("should be fee exempt if in sender '1' white list", async () => {
       const list = 1;
       await tokenInstance.addToWhiteList(list, ALICE);
 
-      let actual = await tokenInstance.isFeeExempt(list, ALICE);
+      const actual = await tokenInstance.isFeeExempt(list, ALICE);
       assert.isTrue(actual, "Alice is not fee exempt");
     });
   });
