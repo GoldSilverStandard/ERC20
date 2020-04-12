@@ -1,10 +1,10 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.6.0;
 
-import "./ERC20.sol";
+import "./IERC20.sol";
 import "./Ownable.sol";
 import "./SafeMath.sol";
 
-contract Base is ERC20, Ownable {
+contract Base is IERC20, Ownable {
     using SafeMath for uint;
 
     uint constant private Sender = 0;
@@ -20,7 +20,7 @@ contract Base is ERC20, Ownable {
 
     // Public variables of the token
     uint8 public decimals = 4;
-    uint256 public totalSupply;
+    uint256 override public totalSupply;
 
     uint16 constant private FEE_INCREASE = 10; //As 0.10%
     uint16 public fee = 20; //As 0.20%
@@ -37,7 +37,7 @@ contract Base is ERC20, Ownable {
     mapping (address => mapping (address => uint256)) private allowed;
     mapping (uint => mapping(address => bool)) private whiteList;
 
-    function balanceOf(address who) public view returns (uint256 balance) {
+    function balanceOf(address who) override public view returns (uint256 balance) {
         balance = balances[who];
     }
 
@@ -68,16 +68,16 @@ contract Base is ERC20, Ownable {
         }
     }
     
-    function transfer(address to, uint256 value) public returns (bool) {
+    function transfer(address to, uint256 value) override public returns (bool) {
         _transfer(msg.sender, to, value);
         return true;
     }
 
-    function allowance(address tokenOwner, address spender) public view returns (uint remaining) {
+    function allowance(address tokenOwner, address spender) override public view returns (uint remaining) {
         return allowed[tokenOwner][spender];
     }
 
-    function transferFrom(address from, address to, uint256 value) public returns (bool success) {
+    function transferFrom(address from, address to, uint256 value) override public returns (bool success) {
         require(to != address(0), "Invalid address");
 
         allowed[from][msg.sender] = allowed[from][msg.sender].sub(value);
@@ -87,7 +87,7 @@ contract Base is ERC20, Ownable {
         return true;
     }
 
-    function approve(address spender, uint256 value) public returns (bool) {
+    function approve(address spender, uint256 value) override public returns (bool) {
         require(spender != address(0), "Invalid address");
 
         allowed[msg.sender][spender] = value;
@@ -105,13 +105,13 @@ contract Base is ERC20, Ownable {
         totalSupply = totalSupply.sub(value);
 
         emit Transfer(owner, address(0), value);
+        emit Burned(serial, value);
     }
 
     function mint(address to, bytes32 location, bytes32 serial, uint256 value) public onlyMinter() returns(bool) {
         require(to != address(0), "Invalid address");
         require(value > 0, "Amount must be greater than zero");
 
-        //mapping (bytes32 => mapping(bytes32 => uint256)) public stock;
         stock[location][serial] = value;
         stockCount = stockCount.add(1);
 
@@ -119,6 +119,7 @@ contract Base is ERC20, Ownable {
         balances[to] = balances[to].add(value);
 
         emit Transfer(owner, to, value);
+        emit Minted(serial, value);
 
         return true;
     }
@@ -190,6 +191,8 @@ contract Base is ERC20, Ownable {
     }
 
     event FeeUpdated(uint16 value);
+    event Burned(bytes32 serial, uint value);
+    event Minted(bytes32 serial, uint value);
 
     modifier onlyBurner() {
         require(burner == msg.sender, "Sender is not a burner");
@@ -201,7 +204,7 @@ contract Base is ERC20, Ownable {
         _;
     }
 
-    function () external payable {
+    fallback () external payable {
         revert("Not payable");
     }
 }

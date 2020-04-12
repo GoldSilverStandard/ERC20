@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.6.2;
 
 import "./Base.sol";
 
@@ -15,5 +15,6 @@ contract Gold is Base {
         burner = msg.sender;
         minter = msg.sender;
         feeHolder = msg.sender;
+        paused = false;
     }
 }
