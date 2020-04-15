@@ -6,11 +6,11 @@ contract("Gold", (accounts) => {
   const alice = accounts[2];
 
   before(async () => {
-    this.token = await Token.new({from: OWNER});
+    this.token = await Token.new({ from: OWNER });
   });
 
   it("should transfer 10 tokens from owner to bob", async () => {
-    await this.token.transfer(accounts[2], 10, {from: OWNER});
+    await this.token.transfer(accounts[2], 10, { from: OWNER });
     var actual = await this.token.balanceOf(OWNER);
     assert.equal(actual.valueOf(), 1327, "Balance should be 1327");
 
@@ -23,7 +23,7 @@ contract("Gold", (accounts) => {
     await this.token.approve(alice, 100);
 
     //account 0 (owner) now transfers from alice to bob
-    await this.token.transferFrom(OWNER, bob, 100, {from: alice});
+    await this.token.transferFrom(OWNER, bob, 100, { from: alice });
 
     var balance = await this.token.balanceOf(bob);
     assert.equal(balance.valueOf(), 100, "Balance should be 100");

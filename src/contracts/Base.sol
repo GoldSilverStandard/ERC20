@@ -33,23 +33,23 @@ contract Base is IERC20, Ownable {
     address public burner;
     address public feeHolder;
 
-    mapping (address => uint256) private balances;
+    mapping (address => uint256) private _balances;
     mapping (address => mapping (address => uint256)) private allowed;
     mapping (uint => mapping(address => bool)) private whiteList;
 
     function balanceOf(address who) override public view returns (uint256 balance) {
-        balance = balances[who];
+        balance = _balances[who];
     }
 
     function _transfer(address from, address to, uint256 value) internal {
         require(paused != true, "Contract paused");
         require(to != address(0), "Invalid address");
         require(from != address(0), "Invalid address");
-        require(balances[from] >= value, "Insufficient funds");
+        require(_balances[from] >= value, "Insufficient funds");
 
         if (isFeeExempt(Sender, from) || isFeeExempt(Receiver, to)) {
-            balances[from] = balances[from].sub(value);
-            balances[to] = balances[to].add(value);
+            _balances[from] = _balances[from].sub(value);
+            _balances[to] = _balances[to].add(value);
 
             emit Transfer(from, to, value);
         } else {
@@ -59,9 +59,9 @@ contract Base is IERC20, Ownable {
                 totalFee = 1;
             }
 
-            balances[from] = balances[from].sub(value);
-            balances[feeHolder] = balances[feeHolder].add(totalFee);
-            balances[to] = balances[to].add(value.sub(totalFee));
+            _balances[from] = _balances[from].sub(value);
+            _balances[feeHolder] = _balances[feeHolder].add(totalFee);
+            _balances[to] = _balances[to].add(value.sub(totalFee));
 
             emit Transfer(from, to, value.sub(totalFee));
             emit Transfer(from, feeHolder, totalFee);
@@ -99,7 +99,7 @@ contract Base is IERC20, Ownable {
         uint256 value = stock[location][serial];
 
         stock[location][serial] = 0;
-        balances[owner] = balances[owner].sub(value);
+        _balances[owner] = _balances[owner].sub(value);
 
         stockCount = stockCount.sub(1);
         totalSupply = totalSupply.sub(value);
@@ -116,7 +116,7 @@ contract Base is IERC20, Ownable {
         stockCount = stockCount.add(1);
 
         totalSupply = totalSupply.add(value);
-        balances[to] = balances[to].add(value);
+        _balances[to] = _balances[to].add(value);
 
         emit Transfer(owner, to, value);
         emit Minted(serial, value);

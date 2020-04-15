@@ -4,8 +4,13 @@ import "./Base.sol";
 
 contract Gold is Base {
 
-    string public symbol = "AUS";
-    string public name = "Gold Standard";
+    function symbol() public pure returns (string memory) {
+        return "AUS";
+    }
+
+    function name() public pure returns (string memory) {
+        return "Gold Standard";
+    }
 
     constructor() public {
         fee = 20;
