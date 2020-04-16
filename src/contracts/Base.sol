@@ -19,7 +19,7 @@ contract Base is IERC20, Ownable {
     }
 
     // Public variables of the token
-    uint8 public decimals = 4;
+    uint16 public decimals = 4;
     uint256 override public totalSupply;
 
     uint16 constant private FEE_INCREASE = 10; //As 0.10%
@@ -34,8 +34,8 @@ contract Base is IERC20, Ownable {
     address public feeHolder;
 
     mapping (address => uint256) private _balances;
-    mapping (address => mapping (address => uint256)) private allowed;
-    mapping (uint => mapping(address => bool)) private whiteList;
+    mapping (address => mapping (address => uint256)) private _allowed;
+    mapping (uint => mapping(address => bool)) private _whiteList;
 
     function balanceOf(address who) override public view returns (uint256 balance) {
         balance = _balances[who];
@@ -74,23 +74,23 @@ contract Base is IERC20, Ownable {
     }
 
     function allowance(address tokenOwner, address spender) override public view returns (uint remaining) {
-        return allowed[tokenOwner][spender];
+        return _allowed[tokenOwner][spender];
     }
 
     function transferFrom(address from, address to, uint256 value) override public returns (bool success) {
         require(to != address(0), "Invalid address");
 
-        allowed[from][msg.sender] = allowed[from][msg.sender].sub(value);
+        _allowed[from][msg.sender] = _allowed[from][msg.sender].sub(value);
         _transfer(from, to, value);
 
-        emit Approval(from, msg.sender, allowed[from][msg.sender]);
+        emit Approval(from, msg.sender, _allowed[from][msg.sender]);
         return true;
     }
 
     function approve(address spender, uint256 value) override public returns (bool) {
         require(spender != address(0), "Invalid address");
 
-        allowed[msg.sender][spender] = value;
+        _allowed[msg.sender][spender] = value;
         emit Approval(msg.sender, spender, value);
         return true;
     }
@@ -145,20 +145,20 @@ contract Base is IERC20, Ownable {
 
     function addToWhiteList(uint index, address who) public onlyOwner() {
         require(who != address(0), "Invalid address");
-        whiteList[index][who] = true;
+        _whiteList[index][who] = true;
     }
 
     function removeFromWhiteList(uint index, address who) public onlyOwner() {
         require(who != address(0), "Invalid address");
-        delete whiteList[index][who];
+        delete _whiteList[index][who];
     }
 
     function inWhiteList(uint index, address who) public view returns (bool) {
-        return whiteList[index][who] == true || who == feeHolder || who == owner;
+        return _whiteList[index][who] == true || who == feeHolder || who == owner;
     }
 
     function inAnyWhiteList(address who) public view returns (bool) {
-        return whiteList[0][who] == true || whiteList[1][who] == true || who == feeHolder || who == owner;
+        return _whiteList[0][who] == true || _whiteList[1][who] == true || who == feeHolder || who == owner;
     }
 
     function updateBurner(address who) public onlyOwner() returns (bool) {
@@ -183,7 +183,7 @@ contract Base is IERC20, Ownable {
     }
 
     function isFeeExempt(uint index, address who) public view returns (bool) {
-        return whiteList[index][who] == true || who == feeHolder || who == owner || who == burner || who == minter;
+        return _whiteList[index][who] == true || who == feeHolder || who == owner || who == burner || who == minter;
     }
 
     function pauseContract() public onlyOwner() {
