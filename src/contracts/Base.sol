@@ -43,8 +43,8 @@ contract Base is IERC20, Ownable {
 
     function _transfer(address from, address to, uint256 value) internal {
         require(paused != true, "Contract paused");
-        require(to != address(0), "Invalid address");
-        require(from != address(0), "Invalid address");
+        require(to != address(0), "Invalid to address");
+        require(from != address(0), "Invalid from address");
         require(_balances[from] >= value, "Insufficient funds");
 
         if (isFeeExempt(Sender, from) || isFeeExempt(Receiver, to)) {
@@ -109,7 +109,7 @@ contract Base is IERC20, Ownable {
     }
 
     function mint(address to, bytes32 location, bytes32 serial, uint256 value) public onlyMinter() returns(bool) {
-        require(to != address(0), "Invalid address");
+        require(to != address(0), "Invalid to address");
         require(value > 0, "Amount must be greater than zero");
 
         stock[location][serial] = value;
