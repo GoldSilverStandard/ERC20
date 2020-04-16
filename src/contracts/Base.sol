@@ -164,22 +164,16 @@ contract Base is IERC20, Ownable {
     function updateBurner(address who) public onlyOwner() returns (bool) {
         require(who != address(0), "Invalid address");
         burner = who;
-
-        return true;
     }
 
     function updateMinter(address who) public onlyOwner() returns (bool) {
         require(who != address(0), "Invalid address");
         minter = who;
-
-        return true;
     }
 
     function updateFeeHolder(address who) public onlyOwner() returns (bool)  {
         require(who != address(0), "Invalid address");
         feeHolder = who;
-
-        return true;
     }
 
     function isFeeExempt(uint index, address who) public view returns (bool) {
