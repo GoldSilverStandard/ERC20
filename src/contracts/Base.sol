@@ -1,8 +1,14 @@
-pragma solidity ^0.6.0;
+pragma solidity 0.6.4;
 
 import "./IERC20.sol";
 import "./Ownable.sol";
 import "./SafeMath.sol";
+
+struct Bar {
+    uint256 amount;
+    bytes32 location;
+    bytes32 serial;
+}
 
 contract Base is IERC20, Ownable {
     using SafeMath for uint;
@@ -11,12 +17,6 @@ contract Base is IERC20, Ownable {
     uint constant private Receiver = 1;
 
     bool public paused;
-
-    struct Bar {
-        uint256 amount;
-        bytes32 location;
-        bytes32 serial;
-    }
 
     // Public variables of the token
     uint16 public decimals = 4;

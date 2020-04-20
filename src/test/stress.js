@@ -9,9 +9,9 @@ contract.only("Silver", (accounts) => {
   });
 
   //Good tool https://blockchangers.github.io/solidity-converter-online/
-  describe("Stress tests", async () => {
+  describe.only("Stress tests", async () => {
     it("should add 100,000 bars", async () => {
-      for (i = 0; i < 100000; i++) {
+      for (i = 0; i < 100; i++) {
         let serial = uuid();
         const location1 = "0x6c6f636174696f6e310000000000000000000000000000000000000000000000";
         await this.token.mint(OWNER, location1, serial, 1);
