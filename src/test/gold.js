@@ -45,26 +45,6 @@ contract("Gold", async (accounts) => {
       assert.equal(count.valueOf(), 1, "Total stock should be 1");
     });
 
-    it("should not burn with different bar sizes", async () => {
-      //Arange
-      await tokenInstance.mint(OWNER, "0x00", "0x01", 100);
-
-      var balance = await tokenInstance.balanceOf(OWNER);
-      assert.equal(balance.valueOf(), 100, "Balance should be 100");
-
-      var actual = await tokenInstance.totalSupply();
-      assert.equal(actual.valueOf(), 100, "Total supply should be 100");
-
-      //Act
-      await tokenInstance.burn("0x00", "0x01", 10);
-
-      actual = await tokenInstance.totalSupply();
-      assert.equal(actual.valueOf(), 100, "Total supply should be 100");
-
-      balance = await tokenInstance.balanceOf(OWNER);
-      assert.equal(balance.valueOf(), 100, "Balance should be 100");
-    });
-
     it("should not burn with different locations", async () => {
       await tokenInstance.mint(OWNER, "0x00", "0x01", 100);
 
@@ -74,7 +54,7 @@ contract("Gold", async (accounts) => {
       var actual = await tokenInstance.totalSupply();
       assert.equal(actual.valueOf(), 100, "Total supply should be 100");
 
-      await tokenInstance.burn("0x99", "0x01", 100);
+      await tokenInstance.burn("0x99", "0x01");
 
       actual = await tokenInstance.totalSupply();
       assert.equal(actual.valueOf(), 100, "Total supply should be 100");
@@ -92,7 +72,7 @@ contract("Gold", async (accounts) => {
       var actual = await tokenInstance.totalSupply();
       assert.equal(actual.valueOf(), 100, "Total supply should be 100");
 
-      await tokenInstance.burn("0x00", "0x99", 100);
+      await tokenInstance.burn("0x00", "0x99");
 
       actual = await tokenInstance.totalSupply();
       assert.equal(actual.valueOf(), 100, "Total supply should be 100");
@@ -110,7 +90,7 @@ contract("Gold", async (accounts) => {
       var actual = await tokenInstance.totalSupply();
       assert.equal(actual.valueOf(), 100, "Total supply should be 100");
 
-      await tokenInstance.burn("0x00", "0x01", 100);
+      await tokenInstance.burn("0x00", "0x01");
 
       actual = await tokenInstance.totalSupply();
       assert.equal(actual.valueOf(), 0, "Total supply should be 0");

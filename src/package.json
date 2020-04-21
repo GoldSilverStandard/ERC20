@@ -8,7 +8,6 @@
   },
   "dependencies": {
     "uuid": "^7.0.3",
-    "uuidv4": "^6.0.7",
     "web3": "^1.2.6"
   },
   "devDependencies": {},

@@ -1,6 +1,6 @@
 const Token = artifacts.require("Silver");
 
-contract.only("Silver", (accounts) => {
+contract("Silver", (accounts) => {
   const OWNER = accounts[0];
   const ALICE = accounts[1];
   const BOB = accounts[2];

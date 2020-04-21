@@ -197,8 +197,4 @@ contract Base is IERC20, Ownable {
         require(minter == msg.sender, "Sender is not a minter");
         _;
     }
-
-    fallback () external payable {
-        revert("Not payable");
-    }
 }

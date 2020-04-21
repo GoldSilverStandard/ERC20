@@ -1,7 +1,7 @@
-const { uuid } = require("uuidv4");
 const Token = artifacts.require("Silver");
+const web3 = require("web3");
 
-contract.only("Silver", (accounts) => {
+contract("Silver", (accounts) => {
   const OWNER = accounts[0];
 
   beforeEach(async () => {
@@ -9,12 +9,12 @@ contract.only("Silver", (accounts) => {
   });
 
   //Good tool https://blockchangers.github.io/solidity-converter-online/
-  describe.only("Stress tests", async () => {
-    it("should add 100,000 bars", async () => {
-      for (i = 0; i < 100; i++) {
-        let serial = uuid();
-        const location1 = "0x6c6f636174696f6e310000000000000000000000000000000000000000000000";
-        await this.token.mint(OWNER, location1, serial, 1);
+  describe("Stress tests", async () => {
+    it("should add 1,000 bars", async () => {
+      for (i = 0; i < 1000; i++) {
+        const location = web3.utils.randomHex(32);
+        const serial = web3.utils.randomHex(32);
+        await this.token.mint(OWNER, location, serial, 1);
       }
     });
   });
