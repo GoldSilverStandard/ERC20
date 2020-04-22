@@ -18,15 +18,14 @@ contract Base is IERC20, Ownable {
 
     bool public paused;
 
-    // Public variables of the token
-    uint16 public decimals = 4;
-    uint256 override public totalSupply;
+    //Private variables of the token
+    uint256 private _lastUpdated;
+    uint256 private _totalSupply;
+    uint256 private _stockCount;
 
     uint16 constant private FEE_INCREASE = 10; //As 0.10%
-    uint16 public fee = 20; //As 0.20%
-    uint256 public lastUpdated;
+    uint public fee = 20; //As 0.20%
 
-    uint256 public stockCount;
     mapping (bytes32 => mapping(bytes32 => uint256)) public stock;
     
     address public minter;
@@ -36,6 +35,23 @@ contract Base is IERC20, Ownable {
     mapping (address => uint256) private _balances;
     mapping (address => mapping (address => uint256)) private _allowed;
     mapping (uint => mapping(address => bool)) private _whiteList;
+
+    function lastUpdated() public view returns (uint256) {
+        return _lastUpdated;
+    }
+
+    function stockCount() public view returns (uint256) {
+        return _stockCount;
+    }
+
+    //erc20 props
+    function decimals() public pure returns (uint16) {
+        return 4;
+    }
+
+    function totalSupply() public view override returns (uint256) {
+        return _totalSupply;
+    }
 
     function balanceOf(address who) override public view returns (uint256 balance) {
         balance = _balances[who];
@@ -53,7 +69,8 @@ contract Base is IERC20, Ownable {
 
             emit Transfer(from, to, value);
         } else {
-            uint totalFee = fee * value / (uint16(10) ** decimals);
+            uint totalFee = fee.mul(value);
+            totalFee = totalFee.div(10 ** _decimals);
 
             if (totalFee == 0) {
                 totalFee = 1;
@@ -95,14 +112,15 @@ contract Base is IERC20, Ownable {
         return true;
     }
 
-    function burn(bytes32 location, bytes32 serial) public onlyBurner() returns (bool) {
+    function burn(bytes32 location, bytes32 serial) public onlyBurner() {
+        //need to check for 0x00
         uint256 value = stock[location][serial];
 
         stock[location][serial] = 0;
         _balances[owner] = _balances[owner].sub(value);
 
-        stockCount = stockCount.sub(1);
-        totalSupply = totalSupply.sub(value);
+        _stockCount = _stockCount.sub(1);
+        _totalSupply = _totalSupply.sub(value);
 
         emit Transfer(owner, address(0), value);
         emit Burned(serial, value);
@@ -113,9 +131,9 @@ contract Base is IERC20, Ownable {
         require(value > 0, "Amount must be greater than zero");
 
         stock[location][serial] = value;
-        stockCount = stockCount.add(1);
+        _stockCount = _stockCount.add(1);
 
-        totalSupply = totalSupply.add(value);
+        _totalSupply = _totalSupply.add(value);
         _balances[to] = _balances[to].add(value);
 
         emit Transfer(owner, to, value);
@@ -128,16 +146,16 @@ contract Base is IERC20, Ownable {
         require(value < fee, "New fee must be less than current fee");
         require(value >= 0, "Fee must be greater than or equal to zero");
 
-        lastUpdated = now;
+        _lastUpdated = now;
         fee = value;
         
         emit FeeUpdated(fee);
     }
 
     function increaseFee() public onlyOwner() {
-        require(now > lastUpdated + 30 days, "Cannot update fee within 30 days of last change");
+        require(now > _lastUpdated + 30 days, "Cannot update fee within 30 days of last change");
         
-        lastUpdated = now;
+        _lastUpdated = now;
         fee += FEE_INCREASE;
         
         emit FeeUpdated(fee);
