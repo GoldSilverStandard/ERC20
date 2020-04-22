@@ -114,8 +114,11 @@ contract Base is IERC20, Ownable {
     }
 
     function burn(bytes32 location, bytes32 serial) public onlyBurner() {
-        //need to check for 0x00
+        require(uint(location) != 0 && uint(serial) != 0, "Invalid location or serial");
         uint256 value = stock[location][serial];
+
+        //check owner has the required amount first
+        require(_balances[owner] >= value, "Cannot burn more than you own");
 
         stock[location][serial] = 0;
         _balances[owner] = _balances[owner].sub(value);
@@ -128,6 +131,7 @@ contract Base is IERC20, Ownable {
     }
 
     function mint(address to, bytes32 location, bytes32 serial, uint256 value) public onlyMinter() returns(bool) {
+        require(uint(location) != 0 && uint(serial) != 0, "Invalid location or serial");
         require(to != address(0), "Invalid to address");
         require(value > 0, "Amount must be greater than zero");
 
