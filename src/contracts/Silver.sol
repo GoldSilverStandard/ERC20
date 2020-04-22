@@ -14,7 +14,7 @@ contract Silver is Base {
 
     constructor() public {
         fee = 20;
-        lastUpdated = 0;
+        _lastUpdated = 0;
 
         //Defaults
         burner = msg.sender;

@@ -19,7 +19,8 @@ contract Base is IERC20, Ownable {
     bool public paused;
 
     //Private variables of the token
-    uint256 private _lastUpdated;
+    uint256 private _decimals;    
+    uint256 internal _lastUpdated;
     uint256 private _totalSupply;
     uint256 private _stockCount;
 
@@ -45,7 +46,7 @@ contract Base is IERC20, Ownable {
     }
 
     //erc20 props
-    function decimals() public pure returns (uint16) {
+    function decimals() public pure returns (uint8) {
         return 4;
     }
 
@@ -70,7 +71,7 @@ contract Base is IERC20, Ownable {
             emit Transfer(from, to, value);
         } else {
             uint totalFee = fee.mul(value);
-            totalFee = totalFee.div(10 ** _decimals);
+            totalFee = totalFee.div(10 ** uint256(decimals()));
 
             if (totalFee == 0) {
                 totalFee = 1;
@@ -142,7 +143,7 @@ contract Base is IERC20, Ownable {
         return true;
     }
 
-    function decreaseFee(uint16 value) public onlyOwner() {
+    function decreaseFee(uint256 value) public onlyOwner() {
         require(value < fee, "New fee must be less than current fee");
         require(value >= 0, "Fee must be greater than or equal to zero");
 
@@ -156,7 +157,7 @@ contract Base is IERC20, Ownable {
         require(now > _lastUpdated + 30 days, "Cannot update fee within 30 days of last change");
         
         _lastUpdated = now;
-        fee += FEE_INCREASE;
+        fee = fee.add(FEE_INCREASE);
         
         emit FeeUpdated(fee);
     }
@@ -202,7 +203,7 @@ contract Base is IERC20, Ownable {
         paused = true;
     }
 
-    event FeeUpdated(uint16 value);
+    event FeeUpdated(uint256 value);
     event Burned(bytes32 serial, uint value);
     event Minted(bytes32 serial, uint value);
 
