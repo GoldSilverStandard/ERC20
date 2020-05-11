@@ -1,7 +1,7 @@
 const Token = artifacts.require("Gold");
 const helper = require("./helpers/truffleTestHelper");
 
-contract("Gold", async (accounts) => {
+contract.only("Gold", async (accounts) => {
   const OWNER = accounts[0];
   const ALICE = accounts[1];
   const BOB = accounts[2];
@@ -11,7 +11,7 @@ contract("Gold", async (accounts) => {
     tokenInstance = await Token.new();
   });
 
-  describe.only("ERC20 tests", async () => {
+  describe("ERC20 tests", async () => {
     it("should test ERC20 public properties", async () => {
       const name = await tokenInstance.name();
       assert.equal(name, "Gold Standard", "Name should be Gold Standard");
@@ -32,9 +32,35 @@ contract("Gold", async (accounts) => {
   });
 
   describe("Mint and burn tests", async () => {
+    it("should not mint to invalid location", async () => {
+      try {
+        await tokenInstance.mint(OWNER, "0x00", "0x01", 1337);
+      } catch (error) {
+        assert(error);
+        assert.equal(
+          error.reason,
+          "Invalid location or serial",
+          `Incorrect revert reason: ${error.reason}`
+        );
+      }
+    });
+
+    it("should not mint with an invalid serial", async () => {
+      try {
+        await tokenInstance.mint(OWNER, "0x01", "0x01", 1337);
+      } catch (error) {
+        assert(error);
+        assert.equal(
+          error.reason,
+          "Invalid location or serial",
+          `Incorrect revert reason: ${error.reason}`
+        );
+      }
+    });
+
     it("should mint 1337 tokens", async () => {
-      await tokenInstance.mint(ALICE, '0x00', '0x01', 1337);
-  
+      await tokenInstance.mint(ALICE, "0x01", "0x01", 1337);
+
       const balance = await tokenInstance.balanceOf(ALICE);
       assert.equal(balance.valueOf(), 1337, "Balance should be 1337");
 
@@ -45,36 +71,16 @@ contract("Gold", async (accounts) => {
       assert.equal(count.valueOf(), 1, "Total stock should be 1");
     });
 
-    it("should not burn with different bar sizes", async () => {
-      //Arange
-      await tokenInstance.mint(OWNER, '0x00', '0x01', 100);
-  
-      var balance = await tokenInstance.balanceOf(OWNER);
-      assert.equal(balance.valueOf(), 100, "Balance should be 100");
-
-      var actual = await tokenInstance.totalSupply();
-      assert.equal(actual.valueOf(), 100, "Total supply should be 100");
-
-      //Act
-      await tokenInstance.burn('0x00', '0x01', 10);
-
-      actual = await tokenInstance.totalSupply();
-      assert.equal(actual.valueOf(), 100, "Total supply should be 100");
-
-      balance = await tokenInstance.balanceOf(OWNER);
-      assert.equal(balance.valueOf(), 100, "Balance should be 100");
-    });
-
     it("should not burn with different locations", async () => {
-      await tokenInstance.mint(OWNER, '0x00', '0x01', 100);
-  
+      await tokenInstance.mint(OWNER, "0x01", "0x01", 100);
+
       var balance = await tokenInstance.balanceOf(OWNER);
       assert.equal(balance.valueOf(), 100, "Balance should be 100");
 
       var actual = await tokenInstance.totalSupply();
       assert.equal(actual.valueOf(), 100, "Total supply should be 100");
 
-      await tokenInstance.burn('0x99', '0x01', 100);
+      await tokenInstance.burn("0x99", "0x01");
 
       actual = await tokenInstance.totalSupply();
       assert.equal(actual.valueOf(), 100, "Total supply should be 100");
@@ -84,15 +90,15 @@ contract("Gold", async (accounts) => {
     });
 
     it("should not burn with different serial", async () => {
-      await tokenInstance.mint(OWNER, '0x00', '0x01', 100);
-  
+      await tokenInstance.mint(OWNER, "0x01", "0x01", 100);
+
       var balance = await tokenInstance.balanceOf(OWNER);
       assert.equal(balance.valueOf(), 100, "Balance should be 100");
 
       var actual = await tokenInstance.totalSupply();
       assert.equal(actual.valueOf(), 100, "Total supply should be 100");
 
-      await tokenInstance.burn('0x00', '0x99', 100);
+      await tokenInstance.burn("0x01", "0x99");
 
       actual = await tokenInstance.totalSupply();
       assert.equal(actual.valueOf(), 100, "Total supply should be 100");
@@ -102,15 +108,15 @@ contract("Gold", async (accounts) => {
     });
 
     it("should burn 100 of 100 tokens", async () => {
-      await tokenInstance.mint(OWNER, '0x00', '0x01', 100);
-  
+      await tokenInstance.mint(OWNER, "0x01", "0x01", 100);
+
       var balance = await tokenInstance.balanceOf(OWNER);
       assert.equal(balance.valueOf(), 100, "Balance should be 100");
 
       var actual = await tokenInstance.totalSupply();
       assert.equal(actual.valueOf(), 100, "Total supply should be 100");
 
-      await tokenInstance.burn('0x00', '0x01', 100);
+      await tokenInstance.burn("0x01", "0x01");
 
       actual = await tokenInstance.totalSupply();
       assert.equal(actual.valueOf(), 0, "Total supply should be 0");
@@ -120,6 +126,32 @@ contract("Gold", async (accounts) => {
 
       const count = await tokenInstance.stockCount();
       assert.equal(count.valueOf(), 0, "Total stock should be 0");
+    });
+
+    it("should not burn more than owners holdings", async () => {
+      await tokenInstance.mint(OWNER, "0x01", "0x01", 100);
+
+      var balance = await tokenInstance.balanceOf(OWNER);
+      assert.equal(balance.valueOf(), 100, "Balance should be 100");
+
+      var actual = await tokenInstance.totalSupply();
+      assert.equal(actual.valueOf(), 100, "Total supply should be 100");
+
+      await tokenInstance.transfer(BOB, 90);
+
+      var balance = await tokenInstance.balanceOf(BOB);
+      assert.equal(balance.valueOf(), 90, "Balance should be 90");
+
+      try {
+        await tokenInstance.burn("0x01", "0x01");
+      } catch (error) {
+        assert(error);
+        assert.equal(
+          error.reason,
+          "Cannot burn more than you own",
+          `Incorrect revert reason: ${error.reason}`
+        );
+      }
     });
   });
 
@@ -139,14 +171,17 @@ contract("Gold", async (accounts) => {
     it("should not allow fee increase within 30 days", async () => {
       try {
         await tokenInstance.increaseFee();
-      }
-      catch(error) {
+      } catch (error) {
         assert(error);
-        assert.equal(error.reason, "Cannot update fee within 30 days of last change", `Incorrect revert reason: ${error.reason}`);
+        assert.equal(
+          error.reason,
+          "Cannot update fee within 30 days of last change",
+          `Incorrect revert reason: ${error.reason}`
+        );
       }
     });
 
-    it.skip("It should increase fee by 0.1% after 30 days", async () => {
+    it.skip("should increase fee by 0.1% after 30 days", async () => {
       await helper.advanceTime(31 * 24 * 60 * 60);
 
       const fee = await tokenInstance.fee();
@@ -163,10 +198,13 @@ contract("Gold", async (accounts) => {
     it("should not allow a negative fee", async () => {
       try {
         await tokenInstance.decreaseFee(-10);
-      }
-      catch(error) {
+      } catch (error) {
         assert(error);
-        assert.equal(error.reason, "New fee must be less than current fee", `Incorrect revert reason: ${error.reason}`);
+        assert.equal(
+          error.reason,
+          "New fee must be less than current fee",
+          `Incorrect revert reason: ${error.reason}`
+        );
       }
     });
 
@@ -182,7 +220,7 @@ contract("Gold", async (accounts) => {
 
   describe("With 10 grams (100,000 tokens) minted balance", async () => {
     beforeEach(async () => {
-      await tokenInstance.mint(OWNER, '0x00', '0x01', 100000);
+      await tokenInstance.mint(OWNER, "0x01", "0x01", 100000);
       await tokenInstance.updateFeeHolder(FEE_HOLDER);
     });
 
@@ -200,7 +238,7 @@ contract("Gold", async (accounts) => {
 
     it("should transfer 10 grams (100,000 tokens) from bob to alice with fee", async () => {
       await tokenInstance.transfer(BOB, 20000);
-      
+
       var actual = await tokenInstance.balanceOf(OWNER);
       assert.equal(Number(actual), 80000, "Owner balance should be 8 grams");
 
@@ -223,7 +261,7 @@ contract("Gold", async (accounts) => {
       await tokenInstance.approve(ALICE, 100);
 
       //account 0 (owner) now transfers from alice to bob
-      await tokenInstance.transferFrom(OWNER, BOB, 100, {from: ALICE});
+      await tokenInstance.transferFrom(OWNER, BOB, 100, { from: ALICE });
       const actual = await tokenInstance.balanceOf(BOB);
       assert.equal(actual.valueOf(), 100, "Balance should be 100");
     });
@@ -231,10 +269,13 @@ contract("Gold", async (accounts) => {
     it("should not allow transfer to zero address", async () => {
       try {
         await tokenInstance.transfer(0, 10);
-      }
-      catch(error) {
+      } catch (error) {
         assert(error);
-        assert.equal(error.reason, "invalid address", `Incorrect revert reason: ${error.reason}`);
+        assert.equal(
+          error.reason,
+          "invalid address",
+          `Incorrect revert reason: ${error.reason}`
+        );
       }
     });
 
@@ -242,17 +283,20 @@ contract("Gold", async (accounts) => {
       await tokenInstance.transfer(BOB, 500);
       try {
         await tokenInstance.transfer(ALICE, 600, { from: BOB });
-      }
-      catch(error) {
+      } catch (error) {
         assert(error);
-        assert.equal(error.reason, "Insufficient funds", `Incorrect revert reason: ${error.reason}`);
+        assert.equal(
+          error.reason,
+          "Insufficient funds",
+          `Incorrect revert reason: ${error.reason}`
+        );
       }
     });
   });
 
   describe("Roles and permissions tests", async () => {
     beforeEach(async () => {
-      await tokenInstance.mint(OWNER, '0x00', '0x01', 100000);
+      await tokenInstance.mint(OWNER, "0x01", "0x01", 100000);
     });
 
     it("should allow owner to update burner", async () => {
@@ -264,7 +308,7 @@ contract("Gold", async (accounts) => {
 
     it("should allow owner to update minter", async () => {
       await tokenInstance.updateMinter(ALICE);
-      
+
       const actual = await tokenInstance.minter();
       assert.equal(actual, ALICE, "Alice is not a minter");
     });

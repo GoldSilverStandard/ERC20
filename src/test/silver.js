@@ -1,12 +1,12 @@
 const Token = artifacts.require("Silver");
 
-contract.only("Silver", (accounts) => {
+contract("Silver", (accounts) => {
   const OWNER = accounts[0];
   const ALICE = accounts[1];
   const BOB = accounts[2];
 
   beforeEach(async () => {
-    this.token = await Token.new({from: OWNER});
+    this.token = await Token.new({ from: OWNER });
   });
 
   describe("ERC20 tests", async () => {
@@ -29,7 +29,7 @@ contract.only("Silver", (accounts) => {
     });
 
     it("should mint 1337 tokens", async () => {
-      await this.token.mint(OWNER, '0x00', '0x01', 1337);
+      await this.token.mint(OWNER, "0x00", "0x01", 1337);
 
       const balance = await this.token.balanceOf(OWNER);
       assert.equal(balance.valueOf(), 1337, "Balance should be 1337");
@@ -39,7 +39,7 @@ contract.only("Silver", (accounts) => {
     });
 
     it("should transfer 10 tokens from owner to bob", async () => {
-      await this.token.mint(OWNER, '0x00', '0x01', 100);
+      await this.token.mint(OWNER, "0x00", "0x01", 100);
 
       await this.token.transfer(BOB, 10);
       var actual = await this.token.balanceOf(OWNER);
@@ -50,7 +50,7 @@ contract.only("Silver", (accounts) => {
     });
 
     it("should transfer 10 grams from bob to alice with fee", async () => {
-      await this.token.mint(OWNER, '0x00', '0x01', 1000);
+      await this.token.mint(OWNER, "0x00", "0x01", 1000);
 
       await this.token.transfer(BOB, 200);
       var actual = await this.token.balanceOf(OWNER);
@@ -69,30 +69,30 @@ contract.only("Silver", (accounts) => {
     });
 
     it("owner should allow alice to transfer 100 tokens to bob from owner", async () => {
-      await this.token.mint(OWNER, '0x00', '0x01', 100);
+      await this.token.mint(OWNER, "0x00", "0x01", 100);
       await this.token.approve(ALICE, 100);
 
       //account 0 (owner) now transfers from alice to bob
-      await this.token.transferFrom(OWNER, BOB, 100, {from: ALICE});
+      await this.token.transferFrom(OWNER, BOB, 100, { from: ALICE });
       var actual = await this.token.balanceOf(BOB);
       assert.equal(actual.valueOf(), 100, "Balance should be 100");
     });
   });
 
-  describe.only("Control tests", async () => {
+  describe("Control tests", async () => {
     it("should not be paused", async () => {
       const paused = await this.token.paused();
       assert.isFalse(paused, "Silver token should not be paused by default");
     });
 
     it("should only allow owner to pause the contract", async () => {
-      await this.token.pauseContract({from: OWNER});
+      await this.token.pauseContract({ from: OWNER });
       const paused = await this.token.paused();
       assert.isTrue(paused, "Silver token should now be paused");
     });
 
     it("should only allow owner to pause the contract", async () => {
-      await this.token.pauseContract({from: OWNER});
+      await this.token.pauseContract({ from: OWNER });
       const paused = await this.token.paused();
       assert.isTrue(paused, "Silver token should now be paused");
     });

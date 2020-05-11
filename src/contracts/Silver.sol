@@ -1,15 +1,20 @@
-pragma solidity ^0.4.24;
+pragma solidity 0.6.4;
 
 import "./Base.sol";
 
 contract Silver is Base {
 
-    string public symbol = "AGS";
-    string public name = "Silver Standard";
+    function symbol() public pure returns (string memory) {
+        return "AGS";
+    }
+
+    function name() public pure returns (string memory) {
+        return "Silver Standard";
+    }
 
     constructor() public {
         fee = 20;
-        lastUpdated = 0;
+        _lastUpdated = 0;
 
         //Defaults
         burner = msg.sender;
