@@ -321,43 +321,66 @@ contract.only("Gold", async (accounts) => {
     });
 
     it("should add Alice to white list '0'", async () => {
-      const list = 0;
-      await tokenInstance.addToWhiteList(list, ALICE);
+      const index = 0;
+      await tokenInstance.addToWhiteList(index, ALICE);
 
-      const actual = await tokenInstance.inWhiteList(list, ALICE);
+      const actual = await tokenInstance.inWhiteList(index, ALICE);
       assert.isTrue(actual, "Alice is not the white list");
     });
 
     it("should add Alice to white list '1'", async () => {
-      const list = 1;
-      await tokenInstance.addToWhiteList(list, ALICE);
+      const index = 1;
+      await tokenInstance.addToWhiteList(index, ALICE);
 
-      const actual = await tokenInstance.inWhiteList(list, ALICE);
+      const actual = await tokenInstance.inWhiteList(index, ALICE);
       assert.isTrue(actual, "Alice is not the white list");
     });
 
     it("should be in any white list", async () => {
-      const list = 1;
-      await tokenInstance.addToWhiteList(list, ALICE);
+      const index = 1;
+      await tokenInstance.addToWhiteList(index, ALICE);
 
       const actual = await tokenInstance.inAnyWhiteList(ALICE);
       assert.isTrue(actual, "Alice is not the white list");
     });
 
     it("should be fee exempt if in sender '0' white list", async () => {
-      const list = 0;
-      await tokenInstance.addToWhiteList(list, ALICE);
+      const index = 0;
+      await tokenInstance.addToWhiteList(index, ALICE);
 
-      const actual = await tokenInstance.isFeeExempt(list, ALICE);
+      const actual = await tokenInstance.isFeeExempt(index, ALICE);
       assert.isTrue(actual, "Alice is not fee exempt");
     });
 
     it("should be fee exempt if in sender '1' white list", async () => {
-      const list = 1;
-      await tokenInstance.addToWhiteList(list, ALICE);
+      const index = 1;
+      await tokenInstance.addToWhiteList(index, ALICE);
 
-      const actual = await tokenInstance.isFeeExempt(list, ALICE);
+      const actual = await tokenInstance.isFeeExempt(index, ALICE);
       assert.isTrue(actual, "Alice is not fee exempt");
+    });
+
+    it("should remove Alice from white list", async () => {
+      const index = 0;
+      await tokenInstance.addToWhiteList(index, ALICE);
+
+      let actual = await tokenInstance.inWhiteList(index, ALICE);
+      assert.isTrue(actual, "Alice is not the white list");
+
+      await tokenInstance.removeFromWhiteList(index, ALICE);
+
+      actual = await tokenInstance.inWhiteList(index, ALICE);
+      assert.isFalse(actual, "Alice is the white list");
+    });
+
+    it("should pause contract", async () => {
+      let actual = await tokenInstance.paused();
+      assert.isFalse(actual,"Contract should not be paused");
+
+      await tokenInstance.pauseContract();
+
+      actual = await tokenInstance.paused();
+      assert.isTrue(actual,"Contract should be paused");
     });
   });
 });

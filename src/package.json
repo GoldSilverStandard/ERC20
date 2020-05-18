@@ -10,7 +10,10 @@
     "uuid": "^7.0.3",
     "web3": "^1.2.6"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "solidity-coverage": "^0.7.5",
+    "truffle-security": "git+https://github.com/ConsenSys/truffle-security.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -1,4 +1,10 @@
 module.exports = {
+
+  plugins: [
+    "truffle-security",
+    "solidity-coverage"
+  ],
+
   networks: {
     development: {
       host: "localhost",
