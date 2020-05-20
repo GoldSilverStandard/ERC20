@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^3.0.1",
+    "eth-gas-reporter": "^0.2.17",
     "uuid": "^7.0.3",
     "web3": "^1.2.6"
   },
