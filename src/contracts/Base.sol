@@ -1,8 +1,8 @@
 pragma solidity 0.6.4;
 
-import "./IERC20.sol";
-import "./Ownable.sol";
-import "./SafeMath.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/math/SafeMath.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 struct Bar {
     uint256 amount;
@@ -118,15 +118,15 @@ contract Base is IERC20, Ownable {
         uint256 value = stock[location][serial];
 
         //check owner has the required amount first
-        require(_balances[owner] >= value, "Cannot burn more than you own");
+        require(_balances[owner()] >= value, "Cannot burn more than you own");
 
         stock[location][serial] = 0;
-        _balances[owner] = _balances[owner].sub(value);
+        _balances[owner()] = _balances[owner()].sub(value);
 
         _stockCount = _stockCount.sub(1);
         _totalSupply = _totalSupply.sub(value);
 
-        emit Transfer(owner, address(0), value);
+        emit Transfer(owner(), address(0), value);
         emit Burned(serial, value);
     }
 
@@ -141,7 +141,7 @@ contract Base is IERC20, Ownable {
         _totalSupply = _totalSupply.add(value);
         _balances[to] = _balances[to].add(value);
 
-        emit Transfer(owner, to, value);
+        emit Transfer(owner(), to, value);
         emit Minted(serial, value);
 
         return true;
@@ -177,11 +177,11 @@ contract Base is IERC20, Ownable {
     }
 
     function inWhiteList(uint index, address who) public view returns (bool) {
-        return _whiteList[index][who] == true || who == feeHolder || who == owner;
+        return _whiteList[index][who] == true || who == feeHolder || who == owner();
     }
 
     function inAnyWhiteList(address who) public view returns (bool) {
-        return _whiteList[0][who] == true || _whiteList[1][who] == true || who == feeHolder || who == owner;
+        return _whiteList[0][who] == true || _whiteList[1][who] == true || who == feeHolder || who == owner();
     }
 
     function updateBurner(address who) public onlyOwner() returns (bool) {
@@ -200,7 +200,7 @@ contract Base is IERC20, Ownable {
     }
 
     function isFeeExempt(uint index, address who) public view returns (bool) {
-        return _whiteList[index][who] == true || who == feeHolder || who == owner || who == burner || who == minter;
+        return _whiteList[index][who] == true || who == feeHolder || who == owner() || who == burner || who == minter;
     }
 
     function pauseContract() public onlyOwner() {
