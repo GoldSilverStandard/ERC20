@@ -2,27 +2,13 @@
 ERC20 Tokens for the Gold Silver Standard
 See https://www.goldsilverstandard.com
 
-## Token Address
+## Contract Address
 Gold Silver Standard now uses the ENS goldsiverstandard.ens
 
 | Network | Token | Ens | Owner |
 | --- | --- | --- | --- |
-| Main | AUS | aus.goldsiverstandard.ens | `0x5b04fbaF54d53f1a4681339A0Da34D903E5FA2B1` |
-
-# Contract addresses
-
-### Mainnet
-Mainnet: ``
-
-### Ropsten
-Mnemonic Phrase: `...`
-
-Owner Address `m/44'/60'/0'/0`: `0x`
-
-Owner Private Key: `0x`
-
-xPub key from: `m/44'/60'/0'/x`
-Contract Address: `0x`
+| Main | AUS | aus.goldsilverstandard.ens | `0x5b04fbaF54d53f1a4681339A0Da34D903E5FA2B1` |
+| Main | AGS | ags.goldsilverstandard.ens | `0x7db5454F3500f28171d1f9c7a38527C9cF94e6b2` |
 
 # Building Contracts
 
