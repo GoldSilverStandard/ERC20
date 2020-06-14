@@ -1,16 +1,12 @@
-pragma solidity 0.6.4;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.6.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-struct Bar {
-    uint256 amount;
-    bytes32 location;
-    bytes32 serial;
-}
-
 contract Base is IERC20, Ownable {
+    
     using SafeMath for uint;
 
     uint constant private Sender = 0;
@@ -19,7 +15,7 @@ contract Base is IERC20, Ownable {
     bool public paused;
 
     //Private variables of the token
-    uint256 private _decimals;    
+    uint256 private _decimals;
     uint256 internal _lastUpdated;
     uint256 private _totalSupply;
     uint256 private _stockCount;
@@ -47,14 +43,14 @@ contract Base is IERC20, Ownable {
 
     //erc20 props
     function decimals() public pure returns (uint8) {
-        return 4;
+        return _decimals;
     }
 
     function totalSupply() public view override returns (uint256) {
         return _totalSupply;
     }
 
-    function balanceOf(address who) override public view returns (uint256 balance) {
+    function balanceOf(address who) public override view returns (uint256 balance) {
         balance = _balances[who];
     }
 
@@ -86,16 +82,16 @@ contract Base is IERC20, Ownable {
         }
     }
     
-    function transfer(address to, uint256 value) override public returns (bool) {
+    function transfer(address to, uint256 value) public override returns (bool) {
         _transfer(msg.sender, to, value);
         return true;
     }
 
-    function allowance(address tokenOwner, address spender) override public view returns (uint remaining) {
+    function allowance(address tokenOwner, address spender) public override view returns (uint remaining) {
         return _allowed[tokenOwner][spender];
     }
 
-    function transferFrom(address from, address to, uint256 value) override public returns (bool success) {
+    function transferFrom(address from, address to, uint256 value) public override returns (bool success) {
         require(to != address(0), "Invalid address");
 
         _allowed[from][msg.sender] = _allowed[from][msg.sender].sub(value);
@@ -105,7 +101,7 @@ contract Base is IERC20, Ownable {
         return true;
     }
 
-    function approve(address spender, uint256 value) override public returns (bool) {
+    function approve(address spender, uint256 value) public override returns (bool) {
         require(spender != address(0), "Invalid address");
 
         _allowed[msg.sender][spender] = value;
