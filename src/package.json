@@ -7,13 +7,13 @@
     "test": "test"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^3.0.1",
+    "@openzeppelin/contracts": "^3.0.2",
     "eth-gas-reporter": "^0.2.17",
     "uuid": "^7.0.3",
-    "web3": "^1.2.8"
+    "web3": "^1.2.9"
   },
   "devDependencies": {
-    "solidity-coverage": "^0.7.5",
+    "solidity-coverage": "^0.7.7",
     "truffle-security": "git+https://github.com/ConsenSys/truffle-security.git"
   },
   "scripts": {

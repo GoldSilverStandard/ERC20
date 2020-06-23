@@ -15,7 +15,6 @@ contract Base is IERC20, Ownable {
     bool public paused;
 
     //Private variables of the token
-    uint256 private _decimals;
     uint256 internal _lastUpdated;
     uint256 private _totalSupply;
     uint256 private _stockCount;
@@ -43,7 +42,7 @@ contract Base is IERC20, Ownable {
 
     //erc20 props
     function decimals() public pure returns (uint8) {
-        return _decimals;
+        return 4;
     }
 
     function totalSupply() public view override returns (uint256) {
