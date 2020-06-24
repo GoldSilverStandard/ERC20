@@ -58,7 +58,10 @@ module.exports = async () => {
       case "transfer": {
         const transferOptions = await inquirer.askTransferInputs();
         const txData = tokenContract.methods
-          .transfer(transferOptions.to, transferOptions.value)
+          .transfer(
+            transferOptions.to,
+            BigNumber(transferOptions.value).times(10000).toString()
+          )
           .encodeABI();
         console.log(
           "Parameters: \n",
@@ -74,7 +77,7 @@ module.exports = async () => {
           .transferFrom(
             transferFromOptions.addressFrom,
             transferFromOptions.addressTo,
-            transferFromOptions.value
+            BigNumber(transferFromOptions.value).times(10000).toString()
           )
           .encodeABI();
         console.log(
@@ -88,7 +91,10 @@ module.exports = async () => {
       case "approve": {
         const approveOptions = await inquirer.askApproveInputs();
         const txData = tokenContract.methods
-          .approve(approveOptions.spender, approveOptions.value)
+          .approve(
+            approveOptions.spender,
+            BigNumber(approveOptions.value).times(10000).toString()
+          )
           .encodeABI();
         console.log(
           "Parameters: \n",
@@ -143,7 +149,7 @@ module.exports = async () => {
       }
     }
   } catch (e) {
-    console.log(e);
+    console.error(e);
     process.exit();
   }
   process.exit();
