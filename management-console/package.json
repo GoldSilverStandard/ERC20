@@ -1,0 +1,30 @@
+{
+  "name": "management-console",
+  "version": "1.0.0",
+  "description": "ERC20 Tokens for the Gold Silver Standard See https://www.goldsilverstandard.com",
+  "bin": {
+    "outside": "bin/token-cli"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GoldSilverStandard/ERC20.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/GoldSilverStandard/ERC20/issues"
+  },
+  "homepage": "https://github.com/GoldSilverStandard/ERC20#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "inquirer": "^7.2.0",
+    "minimist": "^1.2.5",
+    "web3": "^1.2.9"
+  }
+}
