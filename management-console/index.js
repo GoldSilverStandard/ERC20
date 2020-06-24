@@ -109,11 +109,32 @@ module.exports = async () => {
         break;
       }
       case "totalSupply": {
+        const addressToCheck = await inquirer.askTotalSupplyInputs();
+        tokenContract.options.address = addressToCheck.address;
         const totalSupply = await tokenContract.methods.totalSupply().call();
         console.log(
           "Total token supply is:",
           BigNumber(totalSupply).div(10000).toString()
         );
+        break;
+      }
+      case "version": {
+        console.log("Version 1.0.0");
+        break;
+      }
+      case "help": {
+        console.log(`
+        Valid commands:
+        mint \t\t\t Generates a transaction to mint and send tokens
+        burn \t\t\t Generates a transaction to burn specific tokens
+        transfer \t\t Generates a transaction to transfer tokens to a recipient
+        transferFrom \t\t Generates a transaction to move tokens from sender to recipient using the allowance mechanism. 
+        approve \t\t Generates a transaction to approve a spender for a specific amount
+        totalSupply \t\t Retrieves the total supply of an ERC20 compatible token
+        sendTransaction \t Sends a raw (signed) transaction to the network
+        version \t\t The current version of the tool
+        help \t\t\t Displays help information
+        `);
         break;
       }
       default: {

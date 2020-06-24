@@ -86,7 +86,7 @@ module.exports = {
   askTransferInputs: () => {
     const questions = [
       {
-        name: "address",
+        name: "to",
         type: "input",
         message: "Enter the address to transfer the tokens to:",
         validate: function (value) {
@@ -193,6 +193,23 @@ module.exports = {
             return true;
           } else {
             return "Please enter a valid transaction";
+          }
+        },
+      },
+    ];
+    return inquirer.prompt(questions);
+  },
+  askTotalSupplyInputs: () => {
+    const questions = [
+      {
+        name: "address",
+        type: "input",
+        message: "Enter the address of the token to check:",
+        validate: function (value) {
+          if (value.length) {
+            return true;
+          } else {
+            return "Please enter a valid address";
           }
         },
       },
