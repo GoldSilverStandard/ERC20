@@ -316,16 +316,32 @@ module.exports = async () => {
       }
       case "help": {
         console.log(`
-        Valid commands:
-        mint \t\t\t Generates a transaction to mint and send tokens
-        burn \t\t\t Generates a transaction to burn specific tokens
-        transfer \t\t Generates a transaction to transfer tokens to a recipient
-        transferFrom \t\t Generates a transaction to move tokens from sender to recipient using the allowance mechanism. 
-        approve \t\t Generates a transaction to approve a spender for a specific amount
-        totalSupply \t\t Retrieves the total supply of an ERC20 compatible token
-        sendTransaction \t Sends a raw (signed) transaction to the network
-        version \t\t The current version of the tool
-        help \t\t\t Displays help information
+Valid commands:
+version \t\t The current version of the tool
+help \t\t\t Displays help information
+mint \t\t\t Generates a transaction to mint and send tokens
+burn \t\t\t Generates a transaction to burn specific tokens
+transfer \t\t Generates a transaction to transfer tokens to a recipient
+transferFrom \t\t Generates a transaction to move tokens from sender to recipient using the allowance mechanism. 
+approve \t\t Generates a transaction to approve a spender for a specific amount
+totalSupply \t\t Retrieves the total supply of an ERC20 compatible token
+sendTransaction \t Sends a raw (signed) transaction to the network
+lastUpdated
+stockCount
+decimals
+balanceOf
+allowance
+decreaseFee
+increaseFee
+addToWhiteList
+removeFromWhiteList
+inAnyWhiteList
+inWhiteList
+updateBurner
+updateMinter
+updateFeeHolder
+isFeeExempt
+pauseContract
         `);
         break;
       }
