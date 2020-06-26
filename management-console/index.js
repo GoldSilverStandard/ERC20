@@ -160,36 +160,154 @@ module.exports = async () => {
         break;
       }
       case "allowance": {
+        const addressToCheck = await inquirer.askAllowanceInputs();
+        tokenContract.options.address = addressToCheck.address;
+        const value = await tokenContract.methods
+          .allowance(addressToCheck.owner, addressToCheck.spender)
+          .call();
+        console.log(
+          addressToCheck.owner,
+          "has allowed",
+          addressToCheck.spender,
+          "to spend",
+          BigNumber(value).div(10000).toString(),
+          "tokens"
+        );
         break;
       }
       case "decreaseFee": {
+        const data = await inquirer.askDecreaseFeeInputs();
+        const txData = tokenContract.methods
+          .decreaseFee(data.amount)
+          .encodeABI();
+        console.log(
+          "Parameters: \n",
+          data,
+          "\n\nThe decrease fee transaction prepared for signing: \n\n",
+          await generateTx(txData)
+        );
         break;
       }
       case "increaseFee": {
+        const txData = tokenContract.methods.increaseFee().encodeABI();
+        console.log(
+          "The increase fee transaction prepared for signing: \n\n",
+          await generateTx(txData)
+        );
         break;
       }
       case "addToWhiteList": {
+        const data = await inquirer.askWhitelistInputs();
+        const txData = tokenContract.methods
+          .addToWhiteList(data.index, data.who)
+          .encodeABI();
+        console.log(
+          "Parameters: \n",
+          data,
+          "\n\nThe add to whitelist transaction prepared for signing: \n\n",
+          await generateTx(txData)
+        );
         break;
       }
       case "removeFromWhiteList": {
+        const data = await inquirer.askWhitelistInputs();
+        const txData = tokenContract.methods
+          .addToWhiteList(data.index, data.who)
+          .encodeABI();
+        console.log(
+          "Parameters: \n",
+          data,
+          "\n\nThe remove from whitelist transaction prepared for signing: \n\n",
+          await generateTx(txData)
+        );
         break;
       }
       case "inAnyWhiteList": {
+        const data = await inquirer.askInAnyWhitelistInputs();
+        tokenContract.options.address = data.address;
+        const value = await tokenContract.methods
+          .inAnyWhiteList(data.who)
+          .call();
+        console.log("Whitelist status for", data.who, "is", value);
+        break;
+      }
+      case "inWhiteList": {
+        const data = await inquirer.askInWhitelistInputs();
+        tokenContract.options.address = data.address;
+        const value = await tokenContract.methods
+          .inWhiteList(data.index, data.who)
+          .call();
+        console.log(
+          "Whitelist status for index",
+          data.index,
+          "and address",
+          data.who,
+          "is",
+          value
+        );
         break;
       }
       case "updateBurner": {
+        const data = await inquirer.askMintBurnInputs();
+        const txData = tokenContract.methods.updateBurner(data.who).encodeABI();
+        console.log(
+          "Parameters: \n",
+          data,
+          "\n\nThe update burner transaction prepared for signing: \n\n",
+          await generateTx(txData)
+        );
         break;
       }
       case "updateMinter": {
+        const data = await inquirer.askMintBurnInputs();
+        const txData = tokenContract.methods.updateMinter(data.who).encodeABI();
+        console.log(
+          "Parameters: \n",
+          data,
+          "\n\nThe update minter transaction prepared for signing: \n\n",
+          await generateTx(txData)
+        );
         break;
       }
       case "updateFeeHolder": {
+        const data = await inquirer.askMintBurnInputs();
+        const txData = tokenContract.methods
+          .updateFeeHolder(data.who)
+          .encodeABI();
+        console.log(
+          "Parameters: \n",
+          data,
+          "\n\nThe update fee holder transaction prepared for signing: \n\n",
+          await generateTx(txData)
+        );
         break;
       }
       case "isFeeExempt": {
+        const data = await inquirer.askFeeExempt();
+        tokenContract.options.address = data.address;
+        const value = await tokenContract.methods
+          .isFeeExempt(data.index, data.who)
+          .call();
+        console.log(
+          "Fee exempt status for index",
+          data.index,
+          "and address",
+          data.who,
+          "is",
+          value
+        );
         break;
       }
       case "pauseContract": {
+        const data = await inquirer.askTotalSupplyInputs();
+        tokenContract.options.address = data.address;
+        const txData = tokenContract.methods.pauseContract().encodeABI();
+        console.log(
+          "Parameters: \n",
+          data,
+          "\n\nThe pause contract transaction prepared for signing: \n\n",
+          await generateTx(txData)
+        );
         break;
       }
       case "version": {
@@ -223,7 +341,7 @@ module.exports = async () => {
   process.exit();
 };
 
-async function generateTx(data, nonce) {
+async function generateTx(data) {
   return {
     nonce: await web3.eth.getTransactionCount(process.env.SENDER_ADDRESS),
     value: "0",
