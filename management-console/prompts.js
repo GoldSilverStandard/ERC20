@@ -310,7 +310,7 @@ module.exports = {
         type: "input",
         message: "Enter the whitelist index:",
         validate: function (value) {
-          if (value.length && Number(value) > 0) {
+          if (value.length && Number(value) > -1) {
             return true;
           } else {
             return "Please enter a valid number";
@@ -397,7 +397,7 @@ module.exports = {
         type: "input",
         message: "Enter the whitelist index:",
         validate: function (value) {
-          if (value.length && Number(value) > 0) {
+          if (value.length && Number(value) > -1) {
             return true;
           } else {
             return "Please enter a valid number";
@@ -438,7 +438,7 @@ module.exports = {
         type: "input",
         message: "Enter the whitelist index:",
         validate: function (value) {
-          if (value.length && Number(value) > 0) {
+          if (value.length && Number(value) > -1) {
             return true;
           } else {
             return "Please enter a valid number";

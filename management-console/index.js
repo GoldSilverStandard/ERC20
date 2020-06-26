@@ -212,7 +212,7 @@ module.exports = async () => {
       case "removeFromWhiteList": {
         const data = await inquirer.askWhitelistInputs();
         const txData = tokenContract.methods
-          .addToWhiteList(data.index, data.who)
+          .removeFromWhiteList(data.index, data.who)
           .encodeABI();
         console.log(
           "Parameters: \n",
