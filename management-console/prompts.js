@@ -216,4 +216,33 @@ module.exports = {
     ];
     return inquirer.prompt(questions);
   },
+  askBalanceOfInputs: () => {
+    const questions = [
+      {
+        name: "address",
+        type: "input",
+        message: "Enter the address of the token to check:",
+        validate: function (value) {
+          if (value.length) {
+            return true;
+          } else {
+            return "Please enter a valid address";
+          }
+        },
+      },
+      {
+        name: "who",
+        type: "input",
+        message: "Enter the address of the account to get the balance for:",
+        validate: function (value) {
+          if (value.length) {
+            return true;
+          } else {
+            return "Please enter a valid address";
+          }
+        },
+      },
+    ];
+    return inquirer.prompt(questions);
+  },
 };

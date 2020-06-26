@@ -124,6 +124,74 @@ module.exports = async () => {
         );
         break;
       }
+      case "lastUpdated": {
+        const addressToCheck = await inquirer.askTotalSupplyInputs();
+        tokenContract.options.address = addressToCheck.address;
+        const value = await tokenContract.methods.lastUpdated().call();
+        console.log("Last Updated: ", value);
+        break;
+      }
+      case "stockCount": {
+        const addressToCheck = await inquirer.askTotalSupplyInputs();
+        tokenContract.options.address = addressToCheck.address;
+        const value = await tokenContract.methods.stockCount().call();
+        console.log("Stock Count: ", value);
+        break;
+      }
+      case "decimals": {
+        const addressToCheck = await inquirer.askTotalSupplyInputs();
+        tokenContract.options.address = addressToCheck.address;
+        const value = await tokenContract.methods.decimals().call();
+        console.log("Decimals: ", value);
+        break;
+      }
+      case "balanceOf": {
+        const addressToCheck = await inquirer.askBalanceOfInputs();
+        tokenContract.options.address = addressToCheck.address;
+        const value = await tokenContract.methods
+          .balanceOf(addressToCheck.who)
+          .call();
+        console.log(
+          "Balance for ",
+          addressToCheck.who,
+          " is ",
+          BigNumber(value).div(10000).toString()
+        );
+        break;
+      }
+      case "allowance": {
+        break;
+      }
+      case "decreaseFee": {
+        break;
+      }
+      case "increaseFee": {
+        break;
+      }
+      case "addToWhiteList": {
+        break;
+      }
+      case "removeFromWhiteList": {
+        break;
+      }
+      case "inAnyWhiteList": {
+        break;
+      }
+      case "updateBurner": {
+        break;
+      }
+      case "updateMinter": {
+        break;
+      }
+      case "updateFeeHolder": {
+        break;
+      }
+      case "isFeeExempt": {
+        break;
+      }
+      case "pauseContract": {
+        break;
+      }
       case "version": {
         console.log("Version 1.0.0");
         break;
