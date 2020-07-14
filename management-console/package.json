@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "ERC20 Tokens for the Gold Silver Standard See https://www.goldsilverstandard.com",
   "bin": {
-    "outside": "bin/token-cli"
+    "token-cli": "bin/token-cli"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

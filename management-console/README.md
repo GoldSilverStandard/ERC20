@@ -9,6 +9,22 @@
 - `approve`
 - `totalSupply` Prints the current total supply of the supplied token
 - `sendTransaction` Sends a raw (signed) transaction to the network.
+- `lastUpdated`
+- `stockCount`
+- `decimals`
+- `balanceOf`
+- `allowance`
+- `decreaseFee`
+- `increaseFee`
+- `addToWhiteList`
+- `removeFromWhiteList`
+- `inAnyWhiteList`
+- `inWhiteList`
+- `updateBurner`
+- `updateMinter`
+- `updateFeeHolder`
+- `isFeeExempt`
+- `pauseContract`
 
 ## Installation
 
