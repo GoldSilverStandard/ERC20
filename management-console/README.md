@@ -34,4 +34,5 @@ SENDER_ADDRESS="0x896756178b309e42ea606d992AbD5d225755bB46"
 Ensure you are in the `ERC20/management-console` directory.
 
 Use like any other console command. For example to create a mint transaction run `./bin/token-cli mint`. This will ask several questions, and generate the transaction.
+
 You can then use the output with a tool like [EthOffline](https://ethjs.github.io/offline/) to create a signed transaction. The `sendTransaction` command will send a signed transaction to the network.
