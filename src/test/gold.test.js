@@ -208,13 +208,44 @@ contract.only("Gold", async (accounts) => {
       }
     });
 
-    it("should decrease fee", async () => {
+    it.only("should decrease fee", async () => {
       await tokenInstance.decreaseFee(5);
       const actual = await tokenInstance.fee();
       const lastUpdated = await tokenInstance.lastUpdated();
 
       assert.equal(5, actual, "Incorrect fee set");
       assert.isTrue(lastUpdated > 0, "Last updated not set");
+    });
+
+    it.only("should decrease fee twice", async () => {
+      await tokenInstance.decreaseFee(5);
+      let actual = await tokenInstance.fee();
+      let lastUpdated = await tokenInstance.lastUpdated();
+
+      assert.equal(15, actual, "Incorrect fee set");
+      assert.isTrue(lastUpdated > 0, "Last updated not set");
+
+      let actual = await tokenInstance.fee();
+      let lastUpdated = await tokenInstance.lastUpdated();
+
+      assert.equal(10, actual, "Incorrect fee set");
+      assert.isTrue(lastUpdated > 0, "Last updated not set");
+    });
+
+    it.only("should decrease fee by the 20%", async () => {
+      await tokenInstance.decreaseFee(20);
+      const actual = await tokenInstance.fee();
+      const lastUpdated = await tokenInstance.lastUpdated();
+
+      assert.equal(20, actual, "Incorrect fee set");
+      assert.isTrue(lastUpdated > 0, "Last updated not set");
+    });
+
+    it.only("should not be able to decrease fee into the negatives", async () => {
+      const fee = await tokenInstance.fee();
+      assert.equal(20, fee, "Default fee should be 20");
+
+      await tokenInstance.decreaseFee(21);
     });
   });
 
