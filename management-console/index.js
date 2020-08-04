@@ -149,7 +149,7 @@ module.exports = async () => {
         const addressToCheck = await inquirer.askTotalSupplyInputs();
         tokenContract.options.address = addressToCheck.address;
         const value = await tokenContract.methods.fee().call();
-        console.log("Decimals: ", value);
+        console.log("Fee: ", value);
         break;
       }
       case "balanceOf": {
