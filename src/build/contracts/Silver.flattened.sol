@@ -555,20 +555,20 @@ contract Base is IERC20, Ownable {
     }
 }
 
-// File: contracts/Gold.sol
+// File: contracts/Silver.sol
 
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.6.0;
 
 
-contract Gold is Base {
+contract Silver is Base {
 
     function symbol() public pure returns (string memory) {
-        return "AUS";
+        return "AGS";
     }
 
     function name() public pure returns (string memory) {
-        return "Gold Standard";
+        return "Silver Standard";
     }
 
     constructor() public {
