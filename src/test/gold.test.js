@@ -34,7 +34,7 @@ contract.only("Gold", async (accounts) => {
   describe("Mint and burn tests", async () => {
     it("should not mint to invalid location", async () => {
       try {
-        await tokenInstance.mint(OWNER, "0x00", "0x01", 1337);
+        await tokenInstance.mint(OWNER, "0x00", 1337);
       } catch (error) {
         assert(error);
         assert.equal(
@@ -47,7 +47,7 @@ contract.only("Gold", async (accounts) => {
 
     it("should not mint with an invalid serial", async () => {
       try {
-        await tokenInstance.mint(OWNER, "0x01", "0x01", 1337);
+        await tokenInstance.mint(OWNER, "0x00", 1337);
       } catch (error) {
         assert(error);
         assert.equal(
@@ -59,7 +59,7 @@ contract.only("Gold", async (accounts) => {
     });
 
     it("should mint 1337 tokens", async () => {
-      await tokenInstance.mint(ALICE, "0x01", "0x01", 1337);
+      await tokenInstance.mint(ALICE, "0x01", 1337);
 
       const balance = await tokenInstance.balanceOf(ALICE);
       assert.equal(balance.valueOf(), 1337, "Balance should be 1337");
@@ -71,26 +71,8 @@ contract.only("Gold", async (accounts) => {
       assert.equal(count.valueOf(), 1, "Total stock should be 1");
     });
 
-    it("should not burn with different locations", async () => {
-      await tokenInstance.mint(OWNER, "0x01", "0x01", 100);
-
-      var balance = await tokenInstance.balanceOf(OWNER);
-      assert.equal(balance.valueOf(), 100, "Balance should be 100");
-
-      var actual = await tokenInstance.totalSupply();
-      assert.equal(actual.valueOf(), 100, "Total supply should be 100");
-
-      await tokenInstance.burn("0x99", "0x01");
-
-      actual = await tokenInstance.totalSupply();
-      assert.equal(actual.valueOf(), 100, "Total supply should be 100");
-
-      balance = await tokenInstance.balanceOf(OWNER);
-      assert.equal(balance.valueOf(), 100, "Balance should be 100");
-    });
-
     it("should not burn with different serial", async () => {
-      await tokenInstance.mint(OWNER, "0x01", "0x01", 100);
+      await tokenInstance.mint(OWNER, "0x01", 100);
 
       var balance = await tokenInstance.balanceOf(OWNER);
       assert.equal(balance.valueOf(), 100, "Balance should be 100");
@@ -98,7 +80,7 @@ contract.only("Gold", async (accounts) => {
       var actual = await tokenInstance.totalSupply();
       assert.equal(actual.valueOf(), 100, "Total supply should be 100");
 
-      await tokenInstance.burn("0x01", "0x99");
+      await tokenInstance.burn("0x99");
 
       actual = await tokenInstance.totalSupply();
       assert.equal(actual.valueOf(), 100, "Total supply should be 100");
@@ -108,7 +90,7 @@ contract.only("Gold", async (accounts) => {
     });
 
     it("should burn 100 of 100 tokens", async () => {
-      await tokenInstance.mint(OWNER, "0x01", "0x01", 100);
+      await tokenInstance.mint(OWNER, "0x01", 100);
 
       var balance = await tokenInstance.balanceOf(OWNER);
       assert.equal(balance.valueOf(), 100, "Balance should be 100");
@@ -116,7 +98,7 @@ contract.only("Gold", async (accounts) => {
       var actual = await tokenInstance.totalSupply();
       assert.equal(actual.valueOf(), 100, "Total supply should be 100");
 
-      await tokenInstance.burn("0x01", "0x01");
+      await tokenInstance.burn("0x01");
 
       actual = await tokenInstance.totalSupply();
       assert.equal(actual.valueOf(), 0, "Total supply should be 0");
@@ -129,7 +111,7 @@ contract.only("Gold", async (accounts) => {
     });
 
     it("should not burn more than owners holdings", async () => {
-      await tokenInstance.mint(OWNER, "0x01", "0x01", 100);
+      await tokenInstance.mint(OWNER, "0x01", 100);
 
       var balance = await tokenInstance.balanceOf(OWNER);
       assert.equal(balance.valueOf(), 100, "Balance should be 100");
@@ -143,7 +125,7 @@ contract.only("Gold", async (accounts) => {
       assert.equal(balance.valueOf(), 90, "Balance should be 90");
 
       try {
-        await tokenInstance.burn("0x01", "0x01");
+        await tokenInstance.burn("0x01");
       } catch (error) {
         assert(error);
         assert.equal(
@@ -258,7 +240,7 @@ contract.only("Gold", async (accounts) => {
 
   describe("With 10 grams (100,000 tokens) minted balance", async () => {
     beforeEach(async () => {
-      await tokenInstance.mint(OWNER, "0x01", "0x01", 100000);
+      await tokenInstance.mint(OWNER, "0x01", 100000);
       await tokenInstance.updateFeeHolder(FEE_HOLDER);
     });
 
@@ -334,7 +316,7 @@ contract.only("Gold", async (accounts) => {
 
   describe("Roles and permissions tests", async () => {
     beforeEach(async () => {
-      await tokenInstance.mint(OWNER, "0x01", "0x01", 100000);
+      await tokenInstance.mint(OWNER, "0x01", 100000);
     });
 
     it("should allow owner to update burner", async () => {

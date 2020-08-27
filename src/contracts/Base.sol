@@ -22,7 +22,7 @@ contract Base is IERC20, Ownable {
     uint16 constant private FEE_INCREASE = 10; //As 0.10%
     uint public fee = 20; //As 0.20%
 
-    mapping (bytes32 => mapping(bytes32 => uint256)) public stock;
+    mapping (bytes32 => uint256) public stock;
     
     address public minter;
     address public burner;
@@ -108,14 +108,14 @@ contract Base is IERC20, Ownable {
         return true;
     }
 
-    function burn(bytes32 location, bytes32 serial) public onlyBurner() {
-        require(uint(location) != 0 && uint(serial) != 0, "Invalid location or serial");
-        uint256 value = stock[location][serial];
+    function burn(bytes32 serial) public onlyBurner() {
+        require(serial != 0x00, "Invalid location or serial");
+        uint256 value = stock[serial];
 
-        //check owner has the required amount first
+        require(value > 0, "Invalid stock");
         require(_balances[owner()] >= value, "Cannot burn more than you own");
 
-        stock[location][serial] = 0;
+        stock[serial] = 0;
         _balances[owner()] = _balances[owner()].sub(value);
 
         _stockCount = _stockCount.sub(1);
@@ -125,12 +125,12 @@ contract Base is IERC20, Ownable {
         emit Burned(serial, value);
     }
 
-    function mint(address to, bytes32 location, bytes32 serial, uint256 value) public onlyMinter() returns(bool) {
-        require(uint(location) != 0 && uint(serial) != 0, "Invalid location or serial");
+    function mint(address to, bytes32 serial, uint256 value) public onlyMinter() returns(bool) {
+        require(serial != 0x00, "Invalid location or serial");
         require(to != address(0), "Invalid to address");
         require(value > 0, "Amount must be greater than zero");
 
-        stock[location][serial] = value;
+        stock[serial] = value;
         _stockCount = _stockCount.add(1);
 
         _totalSupply = _totalSupply.add(value);
@@ -203,8 +203,8 @@ contract Base is IERC20, Ownable {
     }
 
     event FeeUpdated(uint256 value);
-    event Burned(bytes32 serial, uint value);
-    event Minted(bytes32 serial, uint value);
+    event Burned(bytes32 indexed serial, uint value);
+    event Minted(bytes32 indexed serial, uint value);
 
     modifier onlyBurner() {
         require(burner == msg.sender, "Sender is not a burner");
