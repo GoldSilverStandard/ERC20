@@ -29,7 +29,7 @@ contract("Silver", (accounts) => {
     });
 
     it("should mint 1337 tokens", async () => {
-      await this.token.mint(OWNER, "0x00", "0x01", 1337);
+      await this.token.mint(OWNER, "0x00", 1337);
 
       const balance = await this.token.balanceOf(OWNER);
       assert.equal(balance.valueOf(), 1337, "Balance should be 1337");
@@ -39,7 +39,7 @@ contract("Silver", (accounts) => {
     });
 
     it("should transfer 10 tokens from owner to bob", async () => {
-      await this.token.mint(OWNER, "0x00", "0x01", 100);
+      await this.token.mint(OWNER, "0x00", 100);
 
       await this.token.transfer(BOB, 10);
       var actual = await this.token.balanceOf(OWNER);
@@ -50,7 +50,7 @@ contract("Silver", (accounts) => {
     });
 
     it("should transfer 10 grams from bob to alice with fee", async () => {
-      await this.token.mint(OWNER, "0x00", "0x01", 1000);
+      await this.token.mint(OWNER, "0x00", 1000);
 
       await this.token.transfer(BOB, 200);
       var actual = await this.token.balanceOf(OWNER);
@@ -69,7 +69,7 @@ contract("Silver", (accounts) => {
     });
 
     it("owner should allow alice to transfer 100 tokens to bob from owner", async () => {
-      await this.token.mint(OWNER, "0x00", "0x01", 100);
+      await this.token.mint(OWNER, "0x00", 100);
       await this.token.approve(ALICE, 100);
 
       //account 0 (owner) now transfers from alice to bob
