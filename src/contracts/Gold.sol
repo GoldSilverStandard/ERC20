@@ -10,7 +10,7 @@ contract Gold is Base {
     }
 
     function name() public pure returns (string memory) {
-        return "Gold Standard";
+        return "GS";
     }
 
     constructor() public {

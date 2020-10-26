@@ -59,6 +59,10 @@ contract Base is IERC20, Ownable {
         require(from != address(0), "Invalid from address");
         require(_balances[from] >= value, "Insufficient funds");
 
+        if (fee == 0) {
+
+        }
+        
         if (isFeeExempt(Sender, from) || isFeeExempt(Receiver, to)) {
             _balances[from] = _balances[from].sub(value);
             _balances[to] = _balances[to].add(value);
