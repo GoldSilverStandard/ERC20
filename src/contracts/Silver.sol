@@ -14,13 +14,9 @@ contract Silver is Base {
     }
 
     constructor() public {
-        fee = 20;
-        _lastUpdated = 0;
-
         //Defaults
         burner = msg.sender;
         minter = msg.sender;
-        feeHolder = msg.sender;
         paused = false;
     }
 }
