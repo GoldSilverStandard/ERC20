@@ -47,14 +47,15 @@ To flatten the contract code:
 
 ```
 cd /path/to/project/files/
-npx truffle-flattener contracts/Token.sol > build/contracts/Token.flattened.sol
+npx truffle-flattener contracts/Gold.sol > build/contracts/Gold.flattened.sol
+npx truffle-flattener contracts/Silver.sol > build/contracts/Silver.flattened.sol
 ```
 
 Go to Etherscan (https://etherscan.io/) and load the contract. There will be a
 "verify" link. Click on this link and specify the following:
 
 Contract Type: single file
-Contract Compiler Version: 0.6.4
+Contract Compiler Version: 0.6.0
 
 (There are now two other Contract Types for registering source code; multi-file, and json; these are experimental and will require more investigation).
 

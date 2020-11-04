@@ -353,7 +353,6 @@ contract Base is IERC20, Ownable {
     
     address public minter;
     address public burner;
-    bool public paused;
 
     mapping (address => uint256) private _balances;
     mapping (address => mapping (address => uint256)) private _allowed;
@@ -376,7 +375,6 @@ contract Base is IERC20, Ownable {
     }
 
     function _transfer(address from, address to, uint256 value) internal {
-        require(paused != true, "Contract paused");
         require(to != address(0), "Invalid to address");
         require(from != address(0), "Invalid from address");
         require(_balances[from] >= value, "Insufficient funds");
@@ -458,10 +456,6 @@ contract Base is IERC20, Ownable {
         minter = who;
     }
 
-    function pauseContract() public onlyOwner() {
-        paused = true;
-    }
-
     event FeeUpdated(uint256 value);
     event Burned(bytes32 indexed serial, uint value);
     event Minted(bytes32 indexed serial, uint value);
@@ -477,26 +471,24 @@ contract Base is IERC20, Ownable {
     }
 }
 
-// File: contracts/Gold.sol
+// File: contracts/Silver.sol
 
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.6.0;
 
 
-contract Gold is Base {
+contract Silver is Base {
 
     function symbol() public pure returns (string memory) {
-        return "AUS";
+        return "AGS";
     }
 
     function name() public pure returns (string memory) {
-        return "GS";
+        return "Silver Standard";
     }
 
     constructor() public {
-        //Defaults
         burner = msg.sender;
         minter = msg.sender;
-        paused = false;
     }
 }
