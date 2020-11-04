@@ -78,23 +78,4 @@ contract("Silver", (accounts) => {
       assert.equal(actual.valueOf(), 100, "Balance should be 100");
     });
   });
-
-  describe("Control tests", async () => {
-    it("should not be paused", async () => {
-      const paused = await this.token.paused();
-      assert.isFalse(paused, "Silver token should not be paused by default");
-    });
-
-    it("should only allow owner to pause the contract", async () => {
-      await this.token.pauseContract({ from: OWNER });
-      const paused = await this.token.paused();
-      assert.isTrue(paused, "Silver token should now be paused");
-    });
-
-    it("should only allow owner to pause the contract", async () => {
-      await this.token.pauseContract({ from: OWNER });
-      const paused = await this.token.paused();
-      assert.isTrue(paused, "Silver token should now be paused");
-    });
-  });
 });

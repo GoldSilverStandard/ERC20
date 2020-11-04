@@ -10,17 +10,11 @@ contract Gold is Base {
     }
 
     function name() public pure returns (string memory) {
-        return "GS";
+        return "Gold Standard";
     }
 
     constructor() public {
-        fee = 20;
-        _lastUpdated = 0;
-
-        //Defaults
         burner = msg.sender;
         minter = msg.sender;
-        feeHolder = msg.sender;
-        paused = false;
     }
 }
