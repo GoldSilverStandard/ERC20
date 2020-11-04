@@ -14,9 +14,7 @@ contract Silver is Base {
     }
 
     constructor() public {
-        //Defaults
         burner = msg.sender;
         minter = msg.sender;
-        paused = false;
     }
 }

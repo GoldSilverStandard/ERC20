@@ -16,7 +16,6 @@ contract Base is IERC20, Ownable {
     
     address public minter;
     address public burner;
-    bool public paused;
 
     mapping (address => uint256) private _balances;
     mapping (address => mapping (address => uint256)) private _allowed;
@@ -39,7 +38,6 @@ contract Base is IERC20, Ownable {
     }
 
     function _transfer(address from, address to, uint256 value) internal {
-        require(paused != true, "Contract paused");
         require(to != address(0), "Invalid to address");
         require(from != address(0), "Invalid from address");
         require(_balances[from] >= value, "Insufficient funds");
@@ -119,10 +117,6 @@ contract Base is IERC20, Ownable {
     function updateMinter(address who) public onlyOwner() returns (bool) {
         require(who != address(0), "Invalid address");
         minter = who;
-    }
-
-    function pauseContract() public onlyOwner() {
-        paused = true;
     }
 
     event FeeUpdated(uint256 value);
