@@ -3,5 +3,5 @@ const Silver = artifacts.require("Silver");
 
 module.exports = async (deployer) => {
   await deployer.deploy(Gold);
-  //await deployer.deploy(Silver);
+  await deployer.deploy(Silver);
 };
