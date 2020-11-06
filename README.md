@@ -61,9 +61,9 @@ Contract Compiler Version: 0.6.0
 
 # Auditing
 
-## Mythril/Truffle Security
+## MythX/Truffle Security
 
-Automated audits are run using Truffle Security, the truffle implementation of Mythril.
+Automated audits are run using Truffle Security, the truffle implementation of MythX.  A report has been added to this repo.
 
 To install:
 
@@ -122,3 +122,6 @@ truffle run coverage
 ```
 
 To see which files are covered by solidity coverage or to add and remove files files from the code coverage, see .solcover.js.
+
+## Notes
+Requires use of `node version 10.21.0`

@@ -337,7 +337,7 @@ interface IERC20 {
 // File: contracts/Base.sol
 
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.6.0;
+pragma solidity 0.6.0;
 
 
 
@@ -474,7 +474,7 @@ contract Base is IERC20, Ownable {
 // File: contracts/Gold.sol
 
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.6.0;
+pragma solidity 0.6.0;
 
 
 contract Gold is Base {
