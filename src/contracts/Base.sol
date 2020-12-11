@@ -37,24 +37,21 @@ contract Base is IERC20, Ownable {
         balance = _balances[who];
     }
 
-    function _transfer(address from, address to, uint256 value) internal {
-        require(to != address(0), "Invalid to address");
-        require(from != address(0), "Invalid from address");
-        require(_balances[from] >= value, "Insufficient funds");
-
-        _balances[from] = _balances[from].sub(value);
-        _balances[to] = _balances[to].add(value);
-
-        emit Transfer(from, to, value);
+    function allowance(address tokenOwner, address spender) public override view returns (uint remaining) {
+        return _allowed[tokenOwner][spender];
     }
-    
-    function transfer(address to, uint256 value) public override returns (bool) {
-        _transfer(msg.sender, to, value);
+
+    function approve(address spender, uint256 value) public override returns (bool) {
+        require(spender != address(0), "Invalid address");
+
+        _allowed[msg.sender][spender] = value;
+        emit Approval(msg.sender, spender, value);
         return true;
     }
 
-    function allowance(address tokenOwner, address spender) public override view returns (uint remaining) {
-        return _allowed[tokenOwner][spender];
+    function transfer(address to, uint256 value) public override returns (bool) {
+        _transfer(msg.sender, to, value);
+        return true;
     }
 
     function transferFrom(address from, address to, uint256 value) public override returns (bool success) {
@@ -67,15 +64,17 @@ contract Base is IERC20, Ownable {
         return true;
     }
 
-    function approve(address spender, uint256 value) public override returns (bool) {
-        require(spender != address(0), "Invalid address");
+    function _transfer(address from, address to, uint256 value) internal {
+        require(to != address(0), "Invalid to address");
+        require(from != address(0), "Invalid from address");
 
-        _allowed[msg.sender][spender] = value;
-        emit Approval(msg.sender, spender, value);
-        return true;
+        _balances[from] = _balances[from].sub(value);
+        _balances[to] = _balances[to].add(value);
+
+        emit Transfer(from, to, value);
     }
 
-    function burn(bytes32 serial) public onlyBurner() {
+    function burn(bytes32 serial) external onlyBurner() {
         require(serial != 0x00, "Invalid location or serial");
         uint256 value = stock[serial];
 
@@ -92,7 +91,7 @@ contract Base is IERC20, Ownable {
         emit Burned(serial, value);
     }
 
-    function mint(address to, bytes32 serial, uint256 value) public onlyMinter() returns(bool) {
+    function mint(address to, bytes32 serial, uint256 value) external onlyMinter() returns(bool) {
         require(serial != 0x00, "Invalid location or serial");
         require(to != address(0), "Invalid to address");
         require(value > 0, "Amount must be greater than zero");
@@ -109,14 +108,16 @@ contract Base is IERC20, Ownable {
         return true;
     }
 
-    function updateBurner(address who) public onlyOwner() returns (bool) {
+    function updateBurner(address who) external onlyOwner() returns (bool) {
         require(who != address(0), "Invalid address");
         burner = who;
+        return true;
     }
 
-    function updateMinter(address who) public onlyOwner() returns (bool) {
+    function updateMinter(address who) external onlyOwner() returns (bool) {
         require(who != address(0), "Invalid address");
         minter = who;
+        return true;
     }
 
     event FeeUpdated(uint256 value);
