@@ -11,14 +11,58 @@ contract Base is IERC20, Ownable {
 
     uint256 private _totalSupply;
     uint256 private _stockCount;
+    mapping (address => uint256) private _balances;
+    mapping (address => mapping (address => uint256)) private _allowed;
 
     mapping (bytes32 => uint256) public stock;
-    
     address public minter;
     address public burner;
 
-    mapping (address => uint256) private _balances;
-    mapping (address => mapping (address => uint256)) private _allowed;
+    function burn(bytes32 serial) external onlyBurner() {
+        require(serial != 0x00, "Invalid location or serial");
+        uint256 value = stock[serial];
+
+        require(value > 0, "Invalid stock");
+        require(_balances[owner()] >= value, "Cannot burn more than you own");
+
+        stock[serial] = 0;
+        _balances[owner()] = _balances[owner()].sub(value);
+
+        _stockCount = _stockCount.sub(1);
+        _totalSupply = _totalSupply.sub(value);
+
+        emit Transfer(owner(), address(0), value);
+        emit Burned(serial, value);
+    }
+
+    function mint(address to, bytes32 serial, uint256 value) external onlyMinter() returns(bool) {
+        require(serial != 0x00, "Invalid location or serial");
+        require(to != address(0), "Invalid to address");
+        require(value > 0, "Amount must be greater than zero");
+
+        stock[serial] = value;
+        _stockCount = _stockCount.add(1);
+
+        _totalSupply = _totalSupply.add(value);
+        _balances[to] = _balances[to].add(value);
+
+        emit Transfer(owner(), to, value);
+        emit Minted(serial, value);
+
+        return true;
+    }
+
+    function updateBurner(address who) external onlyOwner() returns (bool) {
+        require(who != address(0), "Invalid address");
+        burner = who;
+        return true;
+    }
+
+    function updateMinter(address who) external onlyOwner() returns (bool) {
+        require(who != address(0), "Invalid address");
+        minter = who;
+        return true;
+    }
 
     function stockCount() public view returns (uint256) {
         return _stockCount;
@@ -72,52 +116,6 @@ contract Base is IERC20, Ownable {
         _balances[to] = _balances[to].add(value);
 
         emit Transfer(from, to, value);
-    }
-
-    function burn(bytes32 serial) external onlyBurner() {
-        require(serial != 0x00, "Invalid location or serial");
-        uint256 value = stock[serial];
-
-        require(value > 0, "Invalid stock");
-        require(_balances[owner()] >= value, "Cannot burn more than you own");
-
-        stock[serial] = 0;
-        _balances[owner()] = _balances[owner()].sub(value);
-
-        _stockCount = _stockCount.sub(1);
-        _totalSupply = _totalSupply.sub(value);
-
-        emit Transfer(owner(), address(0), value);
-        emit Burned(serial, value);
-    }
-
-    function mint(address to, bytes32 serial, uint256 value) external onlyMinter() returns(bool) {
-        require(serial != 0x00, "Invalid location or serial");
-        require(to != address(0), "Invalid to address");
-        require(value > 0, "Amount must be greater than zero");
-
-        stock[serial] = value;
-        _stockCount = _stockCount.add(1);
-
-        _totalSupply = _totalSupply.add(value);
-        _balances[to] = _balances[to].add(value);
-
-        emit Transfer(owner(), to, value);
-        emit Minted(serial, value);
-
-        return true;
-    }
-
-    function updateBurner(address who) external onlyOwner() returns (bool) {
-        require(who != address(0), "Invalid address");
-        burner = who;
-        return true;
-    }
-
-    function updateMinter(address who) external onlyOwner() returns (bool) {
-        require(who != address(0), "Invalid address");
-        minter = who;
-        return true;
     }
 
     event FeeUpdated(uint256 value);
