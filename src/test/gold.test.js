@@ -194,7 +194,7 @@ contract.only("Gold", async (accounts) => {
         assert(error);
         assert.equal(
           error.reason,
-          "Insufficient funds",
+          "SafeMath: subtraction overflow",
           `Incorrect revert reason: ${error.reason}`
         );
       }
