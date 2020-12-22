@@ -46,7 +46,7 @@ The source code will need to be flattened to register a contract on Etherscan.
 To flatten the contract code:
 
 ```
-cd /path/to/project/files/
+cd /path/to/project/files/src/
 npx truffle-flattener contracts/Gold.sol > build/contracts/Gold.flattened.sol
 npx truffle-flattener contracts/Silver.sol > build/contracts/Silver.flattened.sol
 ```
