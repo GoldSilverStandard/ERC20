@@ -5,10 +5,10 @@ See https://www.goldsilverstandard.com
 ## Contract Address
 Gold Silver Standard now uses the ENS goldsiverstandard.ens
 
-| Network | Token | Ens | Owner |
+| Network | Token | Contract | Owner |
 | --- | --- | --- | --- |
-| Main | AUS | aus.goldsilverstandard.ens | `0x5b04fbaF54d53f1a4681339A0Da34D903E5FA2B1` |
-| Main | AGS | ags.goldsilverstandard.ens | `0x7db5454F3500f28171d1f9c7a38527C9cF94e6b2` |
+| Main | AUS | 0x171f9cFc136f2B2aaA148fcC6b660a2029baB048 | `0x5b04fbaF54d53f1a4681339A0Da34D903E5FA2B1` |
+| Main | AGS | 0x843C9AF34F698618F90C898E3967278a260c8d9A | `0x8Ac5cD9afB22dDEAb182d35e9Fcd27Df12F5b88B` |
 
 # Building Contracts
 
