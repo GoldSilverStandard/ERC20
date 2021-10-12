@@ -1,7 +1,7 @@
 const Token = artifacts.require("Gold");
 const helper = require("./helpers/truffleTestHelper");
 
-contract.only("Gold", async (accounts) => {
+contract("Gold", async (accounts) => {
   const OWNER = accounts[0];
   const ALICE = accounts[1];
   const BOB = accounts[2];
