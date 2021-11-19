@@ -74,22 +74,22 @@ contract("Gold", async (accounts) => {
     it("should not burn with different serial", async () => {
       await tokenInstance.mint(OWNER, "0x01", 100);
 
-      var balance = await tokenInstance.balanceOf(OWNER);
+      let balance = await tokenInstance.balanceOf(OWNER);
       assert.equal(balance.valueOf(), 100, "Balance should be 100");
 
-      var actual = await tokenInstance.totalSupply();
+      let actual = await tokenInstance.totalSupply();
       assert.equal(actual.valueOf(), 100, "Total supply should be 100");
 
       try {
-        await tokenInstance.burn("0x99");  
+        await tokenInstance.burn("0x99");
       } catch (error) {
-      assert(error);
-      assert.equal(
-        error.reason,
-        "Invalid stock",
-        `Incorrect revert reason: ${error.reason}`
-      );
-    }
+        assert(error);
+        assert.equal(
+          error.reason,
+          "Invalid stock",
+          `Incorrect revert reason: ${error.reason}`
+        );
+      }
 
       actual = await tokenInstance.totalSupply();
       assert.equal(actual.valueOf(), 100, "Total supply should be 100");
@@ -101,10 +101,10 @@ contract("Gold", async (accounts) => {
     it("should burn 100 of 100 tokens", async () => {
       await tokenInstance.mint(OWNER, "0x01", 100);
 
-      var balance = await tokenInstance.balanceOf(OWNER);
+      let balance = await tokenInstance.balanceOf(OWNER);
       assert.equal(balance.valueOf(), 100, "Balance should be 100");
 
-      var actual = await tokenInstance.totalSupply();
+      let actual = await tokenInstance.totalSupply();
       assert.equal(actual.valueOf(), 100, "Total supply should be 100");
 
       await tokenInstance.burn("0x01");
@@ -122,15 +122,15 @@ contract("Gold", async (accounts) => {
     it("should not burn more than owners holdings", async () => {
       await tokenInstance.mint(OWNER, "0x01", 100);
 
-      var balance = await tokenInstance.balanceOf(OWNER);
+      let balance = await tokenInstance.balanceOf(OWNER);
       assert.equal(balance.valueOf(), 100, "Balance should be 100");
 
-      var actual = await tokenInstance.totalSupply();
+      let actual = await tokenInstance.totalSupply();
       assert.equal(actual.valueOf(), 100, "Total supply should be 100");
 
       await tokenInstance.transfer(BOB, 90);
 
-      var balance = await tokenInstance.balanceOf(BOB);
+      let balance = await tokenInstance.balanceOf(BOB);
       assert.equal(balance.valueOf(), 90, "Balance should be 90");
 
       try {
@@ -153,7 +153,7 @@ contract("Gold", async (accounts) => {
 
     it("should transfer 1 gram (10000 tokens) from owner to bob (no fees)", async () => {
       await tokenInstance.transfer(BOB, 10000);
-      var actual = await tokenInstance.balanceOf(OWNER);
+      let actual = await tokenInstance.balanceOf(OWNER);
       assert.equal(Number(actual), 90000, "Owner balance should be 9 grams");
 
       actual = await tokenInstance.balanceOf(BOB);
@@ -162,7 +162,6 @@ contract("Gold", async (accounts) => {
       actual = await tokenInstance.balanceOf(FEE_HOLDER);
       assert.equal(Number(actual), 0, "Fee holder balance should be 0 gram");
     });
-
 
     it("Owner should allow alice to transfer 100 tokens to bob from owner", async () => {
       await tokenInstance.approve(ALICE, 100);

@@ -42,7 +42,7 @@ contract("Silver", (accounts) => {
       await this.token.mint(OWNER, "0x00", 100);
 
       await this.token.transfer(BOB, 10);
-      var actual = await this.token.balanceOf(OWNER);
+      let actual = await this.token.balanceOf(OWNER);
       assert.equal(actual.valueOf(), 90, "Balance should be 90");
 
       actual = await this.token.balanceOf(BOB);
@@ -53,7 +53,7 @@ contract("Silver", (accounts) => {
       await this.token.mint(OWNER, "0x00", 1000);
 
       await this.token.transfer(BOB, 200);
-      var actual = await this.token.balanceOf(OWNER);
+      let actual = await this.token.balanceOf(OWNER);
       assert.equal(actual.valueOf(), 800, "Balance should be 800");
 
       actual = await this.token.balanceOf(BOB);
@@ -74,7 +74,7 @@ contract("Silver", (accounts) => {
 
       //account 0 (owner) now transfers from alice to bob
       await this.token.transferFrom(OWNER, BOB, 100, { from: ALICE });
-      var actual = await this.token.balanceOf(BOB);
+      let actual = await this.token.balanceOf(BOB);
       assert.equal(actual.valueOf(), 100, "Balance should be 100");
     });
   });
